@@ -99,7 +99,7 @@ If you do not already know your document dimensions and typography settings, fir
 ## Examples
 
 - [examples/quickstart.ipynb](https://github.com/nvnunes/pubify-mpl/blob/main/examples/quickstart.ipynb): notebook version of the minimal quick-start example, writing into the tracked example project at [examples/tex/main.tex](https://github.com/nvnunes/pubify-mpl/blob/main/examples/tex/main.tex)
-- [gallery/layout-gallery.tex](https://github.com/nvnunes/pubify-mpl/blob/main/gallery/layout-gallery.tex): sample LaTeX source showing the supported panel layouts and macro usage
+- [gallery/layout-gallery-examples.tex](https://github.com/nvnunes/pubify-mpl/blob/main/gallery/layout-gallery-examples.tex): sample LaTeX source showing the supported panel layouts and macro usage
 
 ## Layouts
 
