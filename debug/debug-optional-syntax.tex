@@ -1,0 +1,51 @@
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage{graphicx}
+\graphicspath{{../}}
+\usepackage[debug]{pubify}
+
+\begin{document}
+
+\section*{Optional Syntax Debug}
+
+\figfloat
+    {
+        \figtwowide
+        {\fig{fig-example-twowide-1-subcaptions}[Left][fig:debug-twowide-direct-left]}
+        {\fig{fig-example-twowide-2-subcaptions}[Right][fig:debug-twowide-direct-right]}
+    }
+    [\textbf{twowide direct syntax:} Minimal debug case.]
+    [fig:debug-twowide-direct]
+
+\figfloat
+    {
+        \figthree
+        {\fig{fig-example-three-2}[Top][fig:debug-three-direct-top]}
+        {\fig{fig-example-three-2-fixedaspect}[Middle][fig:debug-three-direct-middle]}
+        {\fig{fig-example-three-2}[Bottom][fig:debug-three-direct-bottom]}
+    }
+    [\textbf{three direct syntax:} Minimal debug case.]
+    [fig:debug-three-direct]
+
+\figfloat
+    {
+        \figthreewide
+        {\fig{fig-example-threewide-subcaptions}[Left][fig:debug-threewide-direct-left]}
+        {\fig{fig-example-threewide-subcaptions}[Centre][fig:debug-threewide-direct-centre]}
+        {\fig{fig-example-threewide-subcaptions}[Right][fig:debug-threewide-direct-right]}
+    }
+    [\textbf{threewide direct syntax:} Minimal debug case.]
+    [fig:debug-threewide-direct]
+
+\figfloat
+    {
+        \figfour
+        {\fig{fig-example-four-2-subcaptions}[Top Left][fig:debug-four-direct-topleft]}
+        {\fig{fig-example-four-2-subcaptions}[Top Right][fig:debug-four-direct-topright]}
+        {\fig{fig-example-four-2-subcaptions}[Bottom Left][fig:debug-four-direct-bottomleft]}
+        {\fig{fig-example-four-2-subcaptions}[Bottom Right][fig:debug-four-direct-bottomright]}
+    }
+    [\textbf{four direct syntax:} Minimal debug case.]
+    [fig:debug-four-direct]
+
+\end{document}

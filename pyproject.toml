@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pubify-mpl"
+version = "1.0.0"
+description = "Publication-oriented Matplotlib figure export and LaTeX layout helpers"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = [
+  "matplotlib>=3.8",
+  "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "build>=1.2",
+  "mkdocs>=1.6",
+  "mkdocstrings[python]>=0.30",
+  "twine>=5.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pubify_mpl = []
+"pubify_mpl.assets" = ["*.sty"]
+
+[tool.setuptools.exclude-package-data]
+"*" = [".DS_Store"]

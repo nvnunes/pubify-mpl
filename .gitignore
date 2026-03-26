@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+.conda/
+.env
+.env.*
+dist/
+build/
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/
+examples/tex/pubify.sty
+examples/tex/pubify-template.tex
+examples/tex/figures/plot.pdf
