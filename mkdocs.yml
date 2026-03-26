@@ -1,4 +1,5 @@
 site_name: pubify-mpl
+site_url: https://nvnunes.github.io/pubify-mpl/
 theme:
   name: mkdocs
 nav:

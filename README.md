@@ -98,12 +98,12 @@ If you do not already know your document dimensions and typography settings, fir
 
 ## Examples
 
-- [examples/quickstart.ipynb](/Users/nelsonnunes/Library/CloudStorage/Dropbox/Projects/pubify-mpl/examples/quickstart.ipynb): notebook version of the minimal quick-start example, writing into the tracked example project at [examples/tex/main.tex](/Users/nelsonnunes/Library/CloudStorage/Dropbox/Projects/pubify-mpl/examples/tex/main.tex)
-- [gallery/layout-gallery.tex](/Users/nelsonnunes/Library/CloudStorage/Dropbox/Projects/pubify-mpl/gallery/layout-gallery.tex): sample LaTeX source showing the supported panel layouts and macro usage
+- [examples/quickstart.ipynb](https://github.com/nvnunes/pubify-mpl/blob/main/examples/quickstart.ipynb): notebook version of the minimal quick-start example, writing into the tracked example project at [examples/tex/main.tex](https://github.com/nvnunes/pubify-mpl/blob/main/examples/tex/main.tex)
+- [gallery/layout-gallery.tex](https://github.com/nvnunes/pubify-mpl/blob/main/gallery/layout-gallery.tex): sample LaTeX source showing the supported panel layouts and macro usage
 
 ## Layouts
 
-See layout options in [gallery/layout-gallery.pdf](/Users/nelsonnunes/Library/CloudStorage/Dropbox/Projects/pubify-mpl/gallery/layout-gallery.pdf) including:
+See layout options in [gallery/layout-gallery.pdf](https://github.com/nvnunes/pubify-mpl/blob/main/gallery/layout-gallery.pdf) including:
 
 - `"one"`: one large panel
 - `"onewide"`: one short wide panel
@@ -294,7 +294,7 @@ The supported layout macros are:
 
 ## Python API Reference
 
-Detailed Python API documentation is in [site/api/index.html](site/api/index.html).
+Detailed Python API documentation is at [nvnunes.github.io/pubify-mpl/api/](https://nvnunes.github.io/pubify-mpl/api/).
 
 ## LaTeX Package Reference
 
