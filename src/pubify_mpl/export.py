@@ -131,13 +131,15 @@ def save_fig(
 
     `save_fig(...)` never modifies the original figure in place. It clones the
     figure, applies publication styling and any requested cleanup to that copy,
-    resizes the copy to fit the selected layout, and writes the exported PDF.
+    resizes the copy to fit the selected layout, and writes the exported file.
+    If `filename` has no suffix, `.pdf` is used by default.
 
     Args:
         fig_or_ax: `matplotlib.figure.Figure` or `matplotlib.axes.Axes` to export.
         layout: Named layout such as `"onewide"`, `"twowide"`, or `"four"`.
-        filename: Output path for the exported figure. Relative paths are created
-            if needed; absolute paths require an existing parent directory.
+        filename: Output path for the exported figure. If no suffix is given,
+            `.pdf` is used. Relative paths are created if needed; absolute paths
+            require an existing parent directory.
         template: Optional template dictionary. Overrides any active
             `use_template(...)` context.
         caption_lines: Estimated number of lines in the main caption. Defaults to `1`.

@@ -374,7 +374,8 @@ default template is used.</p>
         <p>Export a copied Matplotlib figure for a named LaTeX layout.</p>
 <p><code>save_fig(...)</code> never modifies the original figure in place. It clones the
 figure, applies publication styling and any requested cleanup to that copy,
-resizes the copy to fit the selected layout, and writes the exported PDF.</p>
+resizes the copy to fit the selected layout, and writes the exported file.
+If <code>filename</code> has no suffix, <code>.pdf</code> is used by default.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -429,8 +430,9 @@ resizes the copy to fit the selected layout, and writes the exported PDF.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Output path for the exported figure. Relative paths are created
-if needed; absolute paths require an existing parent directory.</p>
+                <p>Output path for the exported figure. If no suffix is given,
+<code>.pdf</code> is used. Relative paths are created if needed; absolute paths
+require an existing parent directory.</p>
               </div>
             </td>
             <td>
