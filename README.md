@@ -179,14 +179,22 @@ Lower-level figure adjustment helpers and `prepare_copy(...)` are available in t
 ## Template Keys
 
 The template dictionary tells `pubify-mpl` how much space is available in your LaTeX document and what spacing `pubify.sty` should use around figure rows, subcaptions, and captions.
+Exported figures use the standard LaTeX serif face; the template controls typography sizes, not font family.
 
 | Key | Meaning | Default |
 | --- | --- | --- |
 | `textwidth_in` | document `\textwidth` in inches | required |
 | `textheight_in` | document `\textheight` in inches | required |
-| `base_fontsize_pt` | base font size used when styling the exported figure copy | `12pt` |
 | `caption_lineheight_pt` | measured line height used to estimate main caption height | `13.6pt` |
 | `subcaption_lineheight_pt` | measured line height used to estimate subcaption height | `13.6pt` |
+| `base_fontsize_pt` | base font size used when styling the exported figure copy | `12pt` |
+| `axes_labelsize_pt` | axis-label font size; when unset, defaults to `base_fontsize_pt`, and `-1` leaves existing axis-label sizes unchanged | `base_fontsize_pt` |
+| `tick_labelsize_pt` | tick-label font size; when unset, defaults to `base_fontsize_pt - 1`, and `-1` leaves existing tick-label sizes unchanged | `base_fontsize_pt - 1` |
+| `legend_fontsize_pt` | legend font size; when unset, defaults to `base_fontsize_pt - 1`, and `-1` leaves existing legend sizes unchanged | `base_fontsize_pt - 1` |
+| `title_fontsize_pt` | axes-title font size; when unset, defaults to `base_fontsize_pt + 1`, and `-1` leaves existing title sizes unchanged | `base_fontsize_pt + 1` |
+| `line_width_pt` | stroke width for plotted lines and compatible collections; `-1` leaves existing line widths unchanged | `-1pt` |
+| `axes_line_width_pt` | stroke width for axes spines and tick marks; `-1` leaves existing axes and tick stroke widths unchanged | `0.8pt` |
+| `tick_length_pt` | tick length; `-1` leaves existing tick lengths unchanged | `3.0pt` |
 | `caption_allowance_in` | extra buffer added beyond the estimated main caption text height | `0.08in` |
 | `subcaption_allowance_in` | extra buffer added beyond the estimated subcaption text height | `0.08in` |
 | `single_row_layout_max_height_in` | maximum total layout height budget used for single-row layouts such as `"onewide"` or `"twowide"` | `textheight_in / 3` |

@@ -16,6 +16,13 @@ def test_partial_template_gets_policy_defaults():
     spec = normalized_template({"textwidth_in": 7.0, "textheight_in": 9.0})
     assert spec["textwidth_in"] == 7.0
     assert spec["base_fontsize_pt"] == 12.0
+    assert spec["line_width_pt"] == -1.0
+    assert spec["axes_line_width_pt"] == 0.8
+    assert spec["tick_length_pt"] == 3.0
+    assert spec["axes_labelsize_pt"] == 12.0
+    assert spec["tick_labelsize_pt"] == 11.0
+    assert spec["legend_fontsize_pt"] == 11.0
+    assert spec["title_fontsize_pt"] == 13.0
     assert spec["caption_lineheight_pt"] == 13.6
     assert spec["subcaption_lineheight_pt"] == 13.6
     assert spec["caption_lineheight_in"] == 13.6 / 72.27
@@ -70,6 +77,13 @@ def test_pubify_sty_fallback_defaults_match_python_defaults():
     assert "\\setlength{\\figpostcaptionskip}{0in}" in text
     assert spec["caption_allowance_in"] == 0.08
     assert spec["base_fontsize_pt"] == 12.0
+    assert spec["line_width_pt"] == -1.0
+    assert spec["axes_line_width_pt"] == 0.8
+    assert spec["tick_length_pt"] == 3.0
+    assert spec["axes_labelsize_pt"] == 12.0
+    assert spec["tick_labelsize_pt"] == 11.0
+    assert spec["legend_fontsize_pt"] == 11.0
+    assert spec["title_fontsize_pt"] == 13.0
     assert spec["caption_lineheight_pt"] == 13.6
     assert spec["subcaption_allowance_in"] == 0.08
     assert spec["subcaption_lineheight_pt"] == 13.6

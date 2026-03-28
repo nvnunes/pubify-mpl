@@ -14,6 +14,9 @@ DEFAULT_TEMPLATE = {
     "textwidth_in": 5.39643,
     "textheight_in": 7.58960,
     "base_fontsize_pt": 12.0,
+    "line_width_pt": -1.0,
+    "axes_line_width_pt": 0.8,
+    "tick_length_pt": 3.0,
     "caption_lineheight_pt": 13.6,
     "subcaption_lineheight_pt": 13.6,
     "row_skip_in": 0.11,
@@ -57,6 +60,15 @@ def normalized_template(template: TemplateInput = None) -> TemplateSpec:
 
     if "col_gap_in" not in spec:
         spec["col_gap_in"] = spec["textwidth_in"] * 0.02
+
+    if "axes_labelsize_pt" not in spec:
+        spec["axes_labelsize_pt"] = spec["base_fontsize_pt"]
+    if "tick_labelsize_pt" not in spec:
+        spec["tick_labelsize_pt"] = spec["base_fontsize_pt"] - 1
+    if "legend_fontsize_pt" not in spec:
+        spec["legend_fontsize_pt"] = spec["base_fontsize_pt"] - 1
+    if "title_fontsize_pt" not in spec:
+        spec["title_fontsize_pt"] = spec["base_fontsize_pt"] + 1
 
     spec["caption_lineheight_in"] = spec["caption_lineheight_pt"] / _TEX_PT_PER_IN
     spec["subcaption_lineheight_in"] = spec["subcaption_lineheight_pt"] / _TEX_PT_PER_IN

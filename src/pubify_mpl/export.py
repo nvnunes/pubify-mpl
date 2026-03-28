@@ -278,22 +278,25 @@ def save_fig(
 
         with mpl.rc_context(mpl.rcParamsDefault):
             with mpl.rc_context(rc):
-                adjust.force_font_family(fig2)
+                adjust.force_font_family(fig2, family="serif")
                 fig2.set_facecolor("white")
+                if resolved_template["axes_labelsize_pt"] >= 0:
+                    adjust.set_axes_labelsize(fig2, resolved_template["axes_labelsize_pt"])
+                if resolved_template["tick_labelsize_pt"] >= 0:
+                    adjust.set_tick_labelsize(fig2, resolved_template["tick_labelsize_pt"])
+                if resolved_template["legend_fontsize_pt"] >= 0:
+                    adjust.set_legend_fontsize(fig2, resolved_template["legend_fontsize_pt"])
+                if keep_titles and resolved_template["title_fontsize_pt"] >= 0:
+                    adjust.set_title_fontsize(fig2, resolved_template["title_fontsize_pt"])
+                if resolved_template["line_width_pt"] >= 0:
+                    adjust.set_line_width(fig2, resolved_template["line_width_pt"])
 
-                axes_labelsize = base_fontsize
-                tick_labelsize = base_fontsize - 1
-                legend_fontsize = base_fontsize - 1
-                title_fontsize = base_fontsize + 1
+                if resolved_template["axes_line_width_pt"] >= 0:
+                    adjust.set_spine_width(fig2, resolved_template["axes_line_width_pt"])
+                    adjust.set_tick_width(fig2, resolved_template["axes_line_width_pt"])
 
-                adjust.set_axes_labelsize(fig2, axes_labelsize)
-                adjust.set_tick_labelsize(fig2, tick_labelsize)
-                adjust.set_legend_fontsize(fig2, legend_fontsize)
-                adjust.set_title_fontsize(fig2, title_fontsize)
-                adjust.set_line_width(fig2, 1.2)
-                adjust.set_spine_width(fig2, 0.8)
-                adjust.set_tick_width(fig2, 0.8)
-                adjust.set_tick_length(fig2, 3.0)
+                if resolved_template["tick_length_pt"] >= 0:
+                    adjust.set_tick_length(fig2, resolved_template["tick_length_pt"])
 
                 if prepare_copy is not None:
                     prepare_copy(fig2)

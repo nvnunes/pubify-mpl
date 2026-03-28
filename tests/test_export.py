@@ -313,6 +313,158 @@ def test_prepare_copy_runs_after_standard_cleanup(tmp_path):
     plt.close(fig)
 
 
+def test_save_uses_template_styling_defaults_before_prepare_copy(tmp_path):
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1], label="demo")
+    ax.legend()
+    observed = {}
+
+    def prepare_copy(fig_copy):
+        copied_ax = fig_copy.axes[0]
+        observed["line_width"] = copied_ax.lines[0].get_linewidth()
+        observed["spine_width"] = copied_ax.spines["bottom"].get_linewidth()
+        observed["tick_width"] = copied_ax.xaxis.majorTicks[0].tick1line.get_markeredgewidth()
+        observed["tick_length"] = copied_ax.xaxis.majorTicks[0].tick1line.get_markersize()
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "template-style-defaults.pdf",
+        template={
+            **ARTICLE_TEMPLATE,
+            "line_width_pt": 2.5,
+            "axes_line_width_pt": 1.1,
+            "tick_length_pt": 4.5,
+        },
+        prepare_copy=prepare_copy,
+        skip_rasterize=True,
+    )
+
+    assert observed["line_width"] == 2.5
+    assert observed["spine_width"] == 1.1
+    assert observed["tick_width"] == 1.1
+    assert observed["tick_length"] == 4.5
+    plt.close(fig)
+
+
+def test_save_uses_template_text_style_defaults_before_prepare_copy(tmp_path):
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1], label="demo")
+    ax.legend()
+    observed = {}
+
+    def prepare_copy(fig_copy):
+        copied_ax = fig_copy.axes[0]
+        observed["xlabel_size"] = copied_ax.xaxis.label.get_fontsize()
+        observed["tick_size"] = copied_ax.get_xticklabels()[0].get_fontsize()
+        observed["legend_size"] = copied_ax.get_legend().get_texts()[0].get_fontsize()
+        observed["title_size"] = copied_ax.title.get_fontsize()
+
+    ax.set_xlabel("X")
+    ax.set_title("Title")
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "template-text-style-defaults.pdf",
+        template={
+            **ARTICLE_TEMPLATE,
+            "axes_labelsize_pt": 14.0,
+            "tick_labelsize_pt": 12.5,
+            "legend_fontsize_pt": 10.5,
+            "title_fontsize_pt": 15.0,
+        },
+        keep_titles=True,
+        prepare_copy=prepare_copy,
+        skip_rasterize=True,
+    )
+
+    assert observed["xlabel_size"] == 14.0
+    assert observed["tick_size"] == 12.5
+    assert observed["legend_size"] == 10.5
+    assert observed["title_size"] == 15.0
+    plt.close(fig)
+
+
+def test_save_skips_template_style_override_when_value_is_negative(tmp_path):
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1])
+    ax.lines[0].set_linewidth(2.7)
+    for spine in ax.spines.values():
+        spine.set_linewidth(1.7)
+    ax.tick_params(width=1.7, length=6.0)
+    observed = {}
+
+    def prepare_copy(fig_copy):
+        copied_ax = fig_copy.axes[0]
+        observed["line_width"] = copied_ax.lines[0].get_linewidth()
+        observed["spine_width"] = copied_ax.spines["bottom"].get_linewidth()
+        observed["tick_width"] = copied_ax.xaxis.majorTicks[0].tick1line.get_markeredgewidth()
+        observed["tick_length"] = copied_ax.xaxis.majorTicks[0].tick1line.get_markersize()
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "template-style-skip.pdf",
+        template={
+            **ARTICLE_TEMPLATE,
+            "line_width_pt": -1,
+            "axes_line_width_pt": -1,
+            "tick_length_pt": -1,
+        },
+        prepare_copy=prepare_copy,
+        skip_rasterize=True,
+    )
+
+    assert observed["line_width"] == 2.7
+    assert observed["spine_width"] == 1.7
+    assert observed["tick_width"] == 1.7
+    assert observed["tick_length"] == 6.0
+    plt.close(fig)
+
+
+def test_save_skips_template_text_style_override_when_value_is_negative(tmp_path):
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1], label="demo")
+    ax.set_xlabel("X")
+    ax.set_title("Title")
+    ax.legend()
+    ax.xaxis.label.set_fontsize(17.0)
+    ax.title.set_fontsize(18.0)
+    ax.tick_params(labelsize=14.0)
+    for text in ax.get_legend().get_texts():
+        text.set_fontsize(13.0)
+    observed = {}
+
+    def prepare_copy(fig_copy):
+        copied_ax = fig_copy.axes[0]
+        observed["xlabel_size"] = copied_ax.xaxis.label.get_fontsize()
+        observed["tick_size"] = copied_ax.get_xticklabels()[0].get_fontsize()
+        observed["legend_size"] = copied_ax.get_legend().get_texts()[0].get_fontsize()
+        observed["title_size"] = copied_ax.title.get_fontsize()
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "template-text-style-skip.pdf",
+        template={
+            **ARTICLE_TEMPLATE,
+            "axes_labelsize_pt": -1,
+            "tick_labelsize_pt": -1,
+            "legend_fontsize_pt": -1,
+            "title_fontsize_pt": -1,
+        },
+        keep_titles=True,
+        prepare_copy=prepare_copy,
+        skip_rasterize=True,
+    )
+
+    assert observed["xlabel_size"] == 17.0
+    assert observed["tick_size"] == 14.0
+    assert observed["legend_size"] == 13.0
+    assert observed["title_size"] == 18.0
+    plt.close(fig)
+
+
 def test_save_hide_cbar_removes_single_panel_colorbar(tmp_path):
     fig, ax = plt.subplots()
     img = ax.imshow([[1, 2], [3, 4]])
