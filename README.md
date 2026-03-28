@@ -174,27 +174,7 @@ with use_template(PUBIFY_TEMPLATES["thesis"]):
     save_fig(fig2, "twowide", f"{figures_dir}/plot-2.pdf")
 ```
 
-For advanced styling on the exported copy, use `prepare_copy` together with
-`apply_publication_style(...)`:
-
-```python
-from pubify_mpl import apply_publication_style, save_fig
-
-def _prepare_copy(fig_copy):
-    apply_publication_style(
-        fig_copy,
-        line_width=1.5,
-        tick_labelsize=9.0,
-    )
-
-save_fig(
-    fig,
-    "onewide",
-    f"{figures_dir}/plot.pdf",
-    template=PUBIFY_TEMPLATES["thesis"],
-    prepare_copy=_prepare_copy,
-)
-```
+Lower-level figure adjustment helpers and `prepare_copy(...)` are available in the Python API reference for advanced use.
 
 ## Template Keys
 

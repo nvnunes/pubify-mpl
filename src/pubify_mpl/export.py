@@ -1,3 +1,4 @@
+import pickle
 from pathlib import Path
 from typing import Any, Callable
 
@@ -8,8 +9,14 @@ from matplotlib.backend_bases import RendererBase
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
+from . import adjust
 from .layout import latex_layout_geometry, normalized_template
-from .style import apply_publication_style, clone_figure_pickle, force_font_family
+
+
+def clone_figure_pickle(fig: Figure) -> Figure:
+    blob = pickle.dumps(fig, protocol=pickle.HIGHEST_PROTOCOL)
+    fig2 = pickle.loads(blob)
+    return fig2
 
 
 def _get_renderer(fig: Figure) -> RendererBase:
@@ -232,30 +239,24 @@ def save_fig(
             fig2.axes[0].set_subplotspec(gridspec.GridSpec(1, 1, figure=fig2)[0])
 
         if not keep_titles:
-            for ax in fig2.get_axes():
-                ax.set_title("")
+            adjust.clear_titles(fig2)
 
         if hide_labels:
-            for ax in fig2.get_axes():
-                ax.set_xlabel("")
-                ax.set_ylabel("")
+            adjust.hide_labels(fig2)
 
         if hide_annotations:
-            for ax in fig2.get_axes():
-                for text in list(ax.texts):
-                    text.remove()
+            adjust.hide_annotations(fig2)
 
         if hide_ticks:
-            for ax in fig2.get_axes():
-                ax.set_xticks([])
-                ax.set_yticks([])
+            adjust.hide_ticks(fig2)
         elif hide_tick_labels:
-            for ax in fig2.get_axes():
-                ax.set_xticklabels([])
-                ax.set_yticklabels([])
+            adjust.hide_tick_labels(fig2)
 
         if hide_grid:
-            keep_ax.grid(False)
+            adjust.hide_grid(keep_ax)
+
+        if hide_cbar:
+            adjust.hide_cbar(keep_ax)
 
         rc = {
             "savefig.dpi": dpi,
@@ -277,8 +278,22 @@ def save_fig(
 
         with mpl.rc_context(mpl.rcParamsDefault):
             with mpl.rc_context(rc):
-                force_font_family(fig2)
-                apply_publication_style(fig2, base_fontsize=base_fontsize)
+                adjust.force_font_family(fig2)
+                fig2.set_facecolor("white")
+
+                axes_labelsize = base_fontsize
+                tick_labelsize = base_fontsize - 1
+                legend_fontsize = base_fontsize - 1
+                title_fontsize = base_fontsize + 1
+
+                adjust.set_axes_labelsize(fig2, axes_labelsize)
+                adjust.set_tick_labelsize(fig2, tick_labelsize)
+                adjust.set_legend_fontsize(fig2, legend_fontsize)
+                adjust.set_title_fontsize(fig2, title_fontsize)
+                adjust.set_line_width(fig2, 1.2)
+                adjust.set_spine_width(fig2, 0.8)
+                adjust.set_tick_width(fig2, 0.8)
+                adjust.set_tick_length(fig2, 3.0)
 
                 if prepare_copy is not None:
                     prepare_copy(fig2)
