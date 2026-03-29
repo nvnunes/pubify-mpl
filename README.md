@@ -176,6 +176,17 @@ with use_template(PUBIFY_TEMPLATES["thesis"]):
 
 Lower-level figure adjustment helpers and `prepare_copy(...)` are available in the Python API reference for advanced use.
 
+For figure-specific styling that pubify cannot discover generically, `prepare_copy` may accept a second `style` argument:
+
+```python
+def prepare_copy(fig_copy, style):
+    for text in iter_custom_tick_labels(fig_copy.axes[0]):
+        text.set_fontfamily(style.font_family)
+        text.set_fontsize(style.tick_labelsize_pt)
+```
+
+One-argument callbacks still work. The optional `style` payload carries the resolved publication styling values for text, lines, ticks, and spines.
+
 ## Template Keys
 
 The template dictionary tells `pubify-mpl` how much space is available in your LaTeX document and what spacing `pubify.sty` should use around figure rows, subcaptions, and captions.

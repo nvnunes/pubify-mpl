@@ -810,13 +810,16 @@ line artists in vector outputs.</p>
                 <code>prepare_copy</code>
             </td>
             <td>
-                  <code><span title="typing.Callable">Callable</span>[[<span title="matplotlib.figure.Figure">Figure</span>], None] | None</code>
+                  <code><span title="pubify_mpl.export.PrepareCopyCallback">PrepareCopyCallback</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
                 <p>Optional callback that receives the copied figure after
 the standard cleanup/style pass and can make additional changes
-before rasterization and export sizing.</p>
+before rasterization and export sizing. Callbacks may accept either
+<code>prepare_copy(fig_copy)</code> or <code>prepare_copy(fig_copy, style)</code>, where
+<code>style</code> is a <code>ResolvedStyle</code> carrying the resolved publication
+styling values.</p>
               </div>
             </td>
             <td>

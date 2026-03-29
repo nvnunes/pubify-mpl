@@ -1,6 +1,8 @@
+from dataclasses import dataclass
+import inspect
 import pickle
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, TypeAlias
 
 import matplotlib as mpl
 from matplotlib import gridspec
@@ -11,6 +13,27 @@ from matplotlib.figure import Figure
 
 from . import adjust
 from .layout import latex_layout_geometry, normalized_template
+
+
+@dataclass(frozen=True)
+class ResolvedStyle:
+    """Resolved export styling values available to ``prepare_copy`` callbacks."""
+
+    font_family: str
+    base_fontsize_pt: float
+    axes_labelsize_pt: float
+    tick_labelsize_pt: float
+    legend_fontsize_pt: float
+    title_fontsize_pt: float
+    line_width_pt: float
+    axes_line_width_pt: float
+    tick_length_pt: float
+
+
+PrepareCopyCallback: TypeAlias = (
+    Callable[[Figure], None]
+    | Callable[[Figure, ResolvedStyle], None]
+)
 
 
 def clone_figure_pickle(fig: Figure) -> Figure:
@@ -108,6 +131,65 @@ def _auto_rasterize_figure(
     return rasterized
 
 
+def _resolved_style_from_template(
+    resolved_template: dict[str, Any],
+    *,
+    font_family: str,
+) -> ResolvedStyle:
+    return ResolvedStyle(
+        font_family=font_family,
+        base_fontsize_pt=float(resolved_template["base_fontsize_pt"]),
+        axes_labelsize_pt=float(resolved_template["axes_labelsize_pt"]),
+        tick_labelsize_pt=float(resolved_template["tick_labelsize_pt"]),
+        legend_fontsize_pt=float(resolved_template["legend_fontsize_pt"]),
+        title_fontsize_pt=float(resolved_template["title_fontsize_pt"]),
+        line_width_pt=float(resolved_template["line_width_pt"]),
+        axes_line_width_pt=float(resolved_template["axes_line_width_pt"]),
+        tick_length_pt=float(resolved_template["tick_length_pt"]),
+    )
+
+
+def _invoke_prepare_copy(
+    prepare_copy: PrepareCopyCallback,
+    fig_copy: Figure,
+    style: ResolvedStyle,
+) -> None:
+    try:
+        signature = inspect.signature(prepare_copy)
+    except (TypeError, ValueError) as exc:
+        raise TypeError("prepare_copy must be an inspectable callable.") from exc
+
+    positional_capacity = 0
+    has_varargs = False
+    for parameter in signature.parameters.values():
+        if parameter.kind in (
+            inspect.Parameter.POSITIONAL_ONLY,
+            inspect.Parameter.POSITIONAL_OR_KEYWORD,
+        ):
+            positional_capacity += 1
+        elif parameter.kind == inspect.Parameter.VAR_POSITIONAL:
+            has_varargs = True
+
+    if positional_capacity == 0 and not has_varargs:
+        raise TypeError(
+            "prepare_copy must accept at least one positional argument for the export figure."
+        )
+
+    if not has_varargs and positional_capacity not in {1, 2}:
+        raise TypeError(
+            "prepare_copy must accept either one positional argument (fig_copy) or "
+            "two positional arguments (fig_copy, style)."
+        )
+
+    if has_varargs or positional_capacity >= 2:
+        prepare_copy(fig_copy, style)
+        return
+
+    if positional_capacity == 1:
+        prepare_copy(fig_copy)
+        return
+
+
 def save_fig(
     fig_or_ax: Figure | Axes,
     layout: str,
@@ -132,7 +214,7 @@ def save_fig(
     rasterize_image_pixel_threshold: int = 1_000_000,
     rasterize_line_vertex_threshold: int = 2000,
     extra_rcparams: dict[str, Any] | None = None,
-    prepare_copy: Callable[[Figure], None] | None = None,
+    prepare_copy: PrepareCopyCallback | None = None,
     verbose: bool = False,
 ) -> None:
     """Export a copied Matplotlib figure for a named LaTeX layout.
@@ -175,11 +257,19 @@ def save_fig(
         extra_rcparams: Additional Matplotlib rcParams applied during export.
         prepare_copy: Optional callback that receives the copied figure after
             the standard cleanup/style pass and can make additional changes
-            before rasterization and export sizing.
+            before rasterization and export sizing. Callbacks may accept either
+            `prepare_copy(fig_copy)` or `prepare_copy(fig_copy, style)`, where
+            `style` is a `ResolvedStyle` carrying the resolved publication
+            styling values.
         verbose: Print export diagnostics.
     """
     resolved_template = normalized_template(template)
     base_fontsize = resolved_template["base_fontsize_pt"]
+    font_family = "serif"
+    resolved_style = _resolved_style_from_template(
+        resolved_template,
+        font_family=font_family,
+    )
 
     if caption_lines is None:
         caption_lines = 1
@@ -284,7 +374,7 @@ def save_fig(
 
         with mpl.rc_context(mpl.rcParamsDefault):
             with mpl.rc_context(rc):
-                adjust.force_font_family(fig2, family="serif")
+                adjust.force_font_family(fig2, family=font_family)
                 fig2.set_facecolor("white")
                 if resolved_template["axes_labelsize_pt"] >= 0:
                     adjust.set_axes_labelsize(fig2, resolved_template["axes_labelsize_pt"])
@@ -305,7 +395,7 @@ def save_fig(
                     adjust.set_tick_length(fig2, resolved_template["tick_length_pt"])
 
                 if prepare_copy is not None:
-                    prepare_copy(fig2)
+                    _invoke_prepare_copy(prepare_copy, fig2, resolved_style)
 
                 rasterized_artists = []
                 if not skip_rasterize and _is_vector_output(output_filename):

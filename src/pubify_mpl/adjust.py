@@ -6,7 +6,9 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 
-def _iter_axes(root: Figure | Axes) -> Iterable[Axes]:
+def iter_axes(root: Figure | Axes) -> Iterable[Axes]:
+    """Yield all axes reachable from a figure or axes tree without duplicates."""
+
     seen: set[int] = set()
 
     def walk(ax: Axes) -> Iterable[Axes]:
@@ -26,18 +28,24 @@ def _iter_axes(root: Figure | Axes) -> Iterable[Axes]:
         yield from walk(ax)
 
 
-def _iter_styled_axes(fig: Figure) -> Iterable[Axes]:
-    yield from _iter_axes(fig)
+def iter_styled_axes(fig: Figure) -> Iterable[Axes]:
+    """Yield axes that participate in pubify's standard styling traversal."""
+
+    yield from iter_axes(fig)
+
+
+_iter_axes = iter_axes
+_iter_styled_axes = iter_styled_axes
 
 
 def _coerce_axes(target: Figure | Axes, axes: Axes | Iterable[Axes] | None = None) -> list[Axes]:
     if axes is None:
-        return list(_iter_axes(target))
+        return list(iter_axes(target))
     if isinstance(axes, Axes):
-        return list(_iter_axes(axes))
+        return list(iter_axes(axes))
     resolved: list[Axes] = []
     for ax in axes:
-        resolved.extend(_iter_axes(ax))
+        resolved.extend(iter_axes(ax))
     return resolved
 
 
@@ -47,7 +55,7 @@ def clear_titles(fig: Figure | Axes) -> None:
     Args:
         fig: Figure or axes whose titles should be cleared.
     """
-    for ax in _iter_axes(fig):
+    for ax in iter_axes(fig):
         ax.set_title("")
 
 
@@ -57,7 +65,7 @@ def hide_labels(fig: Figure | Axes) -> None:
     Args:
         fig: Figure or axes whose labels should be removed.
     """
-    for ax in _iter_axes(fig):
+    for ax in iter_axes(fig):
         ax.set_xlabel("")
         ax.set_ylabel("")
 
@@ -68,7 +76,7 @@ def hide_annotations(fig: Figure | Axes) -> None:
     Args:
         fig: Figure or axes whose text annotations should be removed.
     """
-    for ax in _iter_axes(fig):
+    for ax in iter_axes(fig):
         for text in list(ax.texts):
             text.remove()
 
@@ -79,7 +87,7 @@ def hide_ticks(fig: Figure | Axes) -> None:
     Args:
         fig: Figure or axes whose ticks should be removed.
     """
-    for ax in _iter_axes(fig):
+    for ax in iter_axes(fig):
         ax.set_xticks([])
         ax.set_yticks([])
 
@@ -90,7 +98,7 @@ def hide_tick_labels(fig: Figure | Axes) -> None:
     Args:
         fig: Figure or axes whose tick labels should be cleared.
     """
-    for ax in _iter_axes(fig):
+    for ax in iter_axes(fig):
         ax.set_xticklabels([])
         ax.set_yticklabels([])
 
@@ -134,7 +142,7 @@ def set_line_width(fig: Figure | Axes, line_width: float) -> None:
         fig: Figure or axes whose line-like artists should be updated.
         line_width: New stroke width.
     """
-    for ax in _iter_axes(fig):
+    for ax in iter_axes(fig):
         for line in ax.get_lines():
             line.set_linewidth(line_width)
 
@@ -153,7 +161,7 @@ def set_spine_width(fig: Figure | Axes, spine_width: float) -> None:
         fig: Figure or axes whose spines should be updated.
         spine_width: New spine stroke width.
     """
-    for ax in _iter_axes(fig):
+    for ax in iter_axes(fig):
         for spine in ax.spines.values():
             spine.set_linewidth(spine_width)
 
@@ -165,7 +173,7 @@ def set_tick_width(fig: Figure | Axes, tick_width: float) -> None:
         fig: Figure or axes whose ticks should be updated.
         tick_width: New tick stroke width.
     """
-    for ax in _iter_axes(fig):
+    for ax in iter_axes(fig):
         ax.tick_params(which="both", width=tick_width)
 
 
@@ -187,7 +195,7 @@ def set_axes_labelsize(fig: Figure | Axes, axes_labelsize: float) -> None:
         fig: Figure or axes whose axis-label text should be updated.
         axes_labelsize: New axis-label font size.
     """
-    for ax in _iter_styled_axes(_as_figure(fig)):
+    for ax in iter_styled_axes(_as_figure(fig)):
         ax.xaxis.label.set_fontsize(axes_labelsize)
         ax.yaxis.label.set_fontsize(axes_labelsize)
 
@@ -199,7 +207,7 @@ def set_tick_labelsize(fig: Figure | Axes, tick_labelsize: float) -> None:
         fig: Figure or axes whose tick labels should be updated.
         tick_labelsize: New tick-label font size.
     """
-    for ax in _iter_axes(fig):
+    for ax in iter_axes(fig):
         ax.tick_params(which="both", labelsize=tick_labelsize)
 
 
@@ -210,7 +218,7 @@ def set_legend_fontsize(fig: Figure | Axes, legend_fontsize: float) -> None:
         fig: Figure or axes whose legends should be updated.
         legend_fontsize: New legend text and title font size.
     """
-    for ax in _iter_styled_axes(_as_figure(fig)):
+    for ax in iter_styled_axes(_as_figure(fig)):
         leg = ax.get_legend()
         if leg is not None:
             for text in leg.get_texts():
@@ -225,7 +233,7 @@ def set_title_fontsize(fig: Figure | Axes, title_fontsize: float) -> None:
         fig: Figure or axes whose titles should be updated.
         title_fontsize: New title font size.
     """
-    for ax in _iter_styled_axes(_as_figure(fig)):
+    for ax in iter_styled_axes(_as_figure(fig)):
         ax.title.set_fontsize(title_fontsize)
 
 
@@ -243,7 +251,7 @@ def force_font_family(fig: Figure, family: str = "serif") -> None:
     for text in fig.texts:
         text.set_fontfamily(family)
 
-    for ax in _iter_styled_axes(fig):
+    for ax in iter_styled_axes(fig):
         ax.title.set_fontfamily(family)
         ax.xaxis.label.set_fontfamily(family)
         ax.yaxis.label.set_fontfamily(family)

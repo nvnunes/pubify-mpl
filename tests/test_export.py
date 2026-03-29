@@ -3,8 +3,10 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import pytest
 
 from pubify_mpl import save_fig, use_template, write_tex_template
+from pubify_mpl.export import ResolvedStyle
 from pubify_mpl.adjust import (
     force_font_family,
     hide_labels as public_hide_labels,
@@ -279,6 +281,63 @@ def test_prepare_copy_hook_mutates_only_export_copy(tmp_path):
     plt.close(fig)
 
 
+def test_prepare_copy_can_receive_resolved_style(tmp_path):
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1], label="demo")
+    ax.legend()
+    ax.set_xlabel("X")
+    ax.set_title("Title")
+    observed = {}
+
+    def prepare_copy(fig_copy, style):
+        copied_ax = fig_copy.axes[0]
+        observed["same_object"] = fig_copy is fig
+        observed["style"] = style
+        observed["xlabel_size"] = copied_ax.xaxis.label.get_fontsize()
+        observed["tick_size"] = copied_ax.get_xticklabels()[0].get_fontsize()
+        observed["legend_size"] = copied_ax.get_legend().get_texts()[0].get_fontsize()
+        observed["title_size"] = copied_ax.title.get_fontsize()
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "prepare-copy-style.pdf",
+        template={
+            **ARTICLE_TEMPLATE,
+            "base_fontsize_pt": 11.0,
+            "axes_labelsize_pt": 14.0,
+            "tick_labelsize_pt": 12.5,
+            "legend_fontsize_pt": 10.5,
+            "title_fontsize_pt": 15.0,
+            "line_width_pt": 2.5,
+            "axes_line_width_pt": 1.1,
+            "tick_length_pt": 4.5,
+        },
+        keep_titles=True,
+        prepare_copy=prepare_copy,
+        skip_rasterize=True,
+    )
+
+    assert observed["same_object"] is False
+    assert isinstance(observed["style"], ResolvedStyle)
+    assert observed["style"] == ResolvedStyle(
+        font_family="serif",
+        base_fontsize_pt=11.0,
+        axes_labelsize_pt=14.0,
+        tick_labelsize_pt=12.5,
+        legend_fontsize_pt=10.5,
+        title_fontsize_pt=15.0,
+        line_width_pt=2.5,
+        axes_line_width_pt=1.1,
+        tick_length_pt=4.5,
+    )
+    assert observed["xlabel_size"] == observed["style"].axes_labelsize_pt
+    assert observed["tick_size"] == observed["style"].tick_labelsize_pt
+    assert observed["legend_size"] == observed["style"].legend_fontsize_pt
+    assert observed["title_size"] == observed["style"].title_fontsize_pt
+    plt.close(fig)
+
+
 def test_hide_annotations_removes_axis_text(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
@@ -337,6 +396,26 @@ def test_prepare_copy_runs_after_standard_cleanup(tmp_path):
 
     assert observed["xlabel"] == ""
     assert observed["ylabel"] == ""
+    plt.close(fig)
+
+
+def test_prepare_copy_rejects_incompatible_callback_signature(tmp_path):
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1])
+
+    def prepare_copy(fig_copy, style, extra):
+        raise AssertionError("should not be called")
+
+    with pytest.raises(TypeError, match="prepare_copy must accept either one positional argument"):
+        save_fig(
+            fig,
+            "onewide",
+            tmp_path / "bad-prepare-copy-signature.pdf",
+            template=ARTICLE_TEMPLATE,
+            prepare_copy=prepare_copy,
+            skip_rasterize=True,
+        )
+
     plt.close(fig)
 
 

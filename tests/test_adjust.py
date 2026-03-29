@@ -19,6 +19,8 @@ from pubify_mpl.adjust import (
     set_tick_length,
     set_tick_width,
     set_title_fontsize,
+    iter_axes,
+    iter_styled_axes,
 )
 
 
@@ -36,6 +38,26 @@ def test_hide_labels_clears_labels_on_main_and_inset_axes():
     assert ax.get_ylabel() == ""
     assert inset.get_xlabel() == ""
     assert inset.get_ylabel() == ""
+    plt.close(fig)
+
+
+def test_iter_axes_yields_main_and_inset_axes_without_duplicates():
+    fig, ax = plt.subplots()
+    inset = ax.inset_axes([0.6, 0.1, 0.3, 0.3])
+
+    axes = list(iter_axes(fig))
+
+    assert axes == [ax, inset]
+    plt.close(fig)
+
+
+def test_iter_styled_axes_matches_pubify_styled_axes_traversal():
+    fig, ax = plt.subplots()
+    inset = ax.inset_axes([0.6, 0.1, 0.3, 0.3])
+
+    axes = list(iter_styled_axes(fig))
+
+    assert axes == [ax, inset]
     plt.close(fig)
 
 
