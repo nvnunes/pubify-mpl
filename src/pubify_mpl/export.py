@@ -126,6 +126,7 @@ def save_fig(
     hide_tick_labels: bool = False,
     hide_grid: bool = False,
     hide_cbar: bool = False,
+    skip_clone: bool = False,
     skip_rasterize: bool = False,
     rasterize_scatter_threshold: int = 1000,
     rasterize_image_pixel_threshold: int = 1_000_000,
@@ -136,9 +137,10 @@ def save_fig(
 ) -> None:
     """Export a copied Matplotlib figure for a named LaTeX layout.
 
-    `save_fig(...)` never modifies the original figure in place. It clones the
-    figure, applies publication styling and any requested cleanup to that copy,
-    resizes the copy to fit the selected layout, and writes the exported file.
+    `save_fig(...)` normally never modifies the original figure in place. It
+    clones the figure, applies publication styling and any requested cleanup to
+    that copy, resizes the copy to fit the selected layout, and writes the
+    exported file. If `skip_clone=True`, export operates on the original figure.
     If `filename` has no suffix, `.pdf` is used by default.
 
     Args:
@@ -162,6 +164,7 @@ def save_fig(
         hide_tick_labels: Remove tick labels while keeping tick positions.
         hide_grid: Disable the grid on the copied figure.
         hide_cbar: Remove a colorbar when exporting a single-axes panel.
+        skip_clone: Skip the pickle-clone step and export the original figure in place.
         skip_rasterize: Disable the vector-output rasterization heuristic.
         rasterize_scatter_threshold: Collection-size threshold for auto-rasterizing
             scatter-like artists in vector outputs.
@@ -212,13 +215,16 @@ def save_fig(
         parent_dir.mkdir(parents=True, exist_ok=True)
 
     fig2 = None
-    try:
-        fig2 = clone_figure_pickle(fig)
-    except Exception as exc:
-        raise RuntimeError(
-            "Figure pickle-clone failed. This can happen with some custom artists/backends.\n"
-            f"Original error: {type(exc).__name__}: {exc}"
-        ) from exc
+    if skip_clone:
+        fig2 = fig
+    else:
+        try:
+            fig2 = clone_figure_pickle(fig)
+        except Exception as exc:
+            raise RuntimeError(
+                "Figure pickle-clone failed. This can happen with some custom artists/backends.\n"
+                f"Original error: {type(exc).__name__}: {exc}"
+            ) from exc
 
     try:
         keep_ax = fig2.axes[axis_idx]

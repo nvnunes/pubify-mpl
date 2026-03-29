@@ -428,9 +428,10 @@ default template is used.</p>
     <div class="doc doc-contents first">
 
         <p>Export a copied Matplotlib figure for a named LaTeX layout.</p>
-<p><code>save_fig(...)</code> never modifies the original figure in place. It clones the
-figure, applies publication styling and any requested cleanup to that copy,
-resizes the copy to fit the selected layout, and writes the exported file.
+<p><code>save_fig(...)</code> normally never modifies the original figure in place. It
+clones the figure, applies publication styling and any requested cleanup to
+that copy, resizes the copy to fit the selected layout, and writes the
+exported file. If <code>skip_clone=True</code>, export operates on the original figure.
 If <code>filename</code> has no suffix, <code>.pdf</code> is used by default.</p>
 
 
@@ -699,6 +700,22 @@ chosen layout budget.</p>
             <td>
               <div class="doc-md-description">
                 <p>Remove a colorbar when exporting a single-axes panel.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>skip_clone</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Skip the pickle-clone step and export the original figure in place.</p>
               </div>
             </td>
             <td>

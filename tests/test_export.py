@@ -62,6 +62,33 @@ def test_save_accepts_force_width_with_layout(tmp_path):
     plt.close(fig)
 
 
+def test_save_can_skip_clone_step(tmp_path, monkeypatch):
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1])
+    called = False
+
+    def fail_clone(_fig):
+        nonlocal called
+        called = True
+        raise AssertionError("clone should not run when skip_clone=True")
+
+    monkeypatch.setattr("pubify_mpl.export.clone_figure_pickle", fail_clone)
+
+    output = save_fig(
+        fig,
+        "onewide",
+        tmp_path / "skip-clone-demo.pdf",
+        template=ARTICLE_TEMPLATE,
+        skip_clone=True,
+        skip_rasterize=True,
+    )
+
+    assert output is None
+    assert called is False
+    assert (tmp_path / "skip-clone-demo.pdf").exists()
+    plt.close(fig)
+
+
 def test_save_force_width_rejects_too_wide_request(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
