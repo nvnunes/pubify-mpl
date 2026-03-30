@@ -220,13 +220,13 @@
 }
 
 \newcommand{\figitem}[1]{%
-  \figitem@i#1\figitem@stop
+  \figitem@i#1\figitem@stop{#1}%
 }
-\def\figitem@i#1#2\figitem@stop{%
+\def\figitem@i#1#2\figitem@stop#3{%
   \ifx#1\fig
-    #1#2%
+    #3%
   \else
-    \figbox{\figW}{#1#2}%
+    \figbox{\figW}{#3}%
   \fi
 }
 \makeatother
