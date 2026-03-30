@@ -5,8 +5,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pytest
 
-from pubify_mpl import save_fig, use_template, write_tex_template
+from pubify_mpl import pubify_rc_context, save_fig, use_template, write_tex_template
 from pubify_mpl.export import ResolvedStyle
+from pubify_mpl.rc import resolved_pubify_rc
 from pubify_mpl.adjust import (
     force_font_family,
     hide_labels as public_hide_labels,
@@ -161,6 +162,32 @@ def test_save_uses_context_default_template(tmp_path):
     plt.close(fig)
 
 
+def test_resolved_pubify_rc_matches_export_defaults():
+    rc = resolved_pubify_rc(template=ARTICLE_TEMPLATE)
+
+    assert rc["font.size"] == 12.0
+    assert rc["text.usetex"] is True
+    assert rc["font.family"] == "serif"
+    assert rc["font.serif"] == ["Latin Modern Roman", "LMRoman10"]
+    assert rc["mathtext.fontset"] == "cm"
+    assert r"\usepackage[T1]{fontenc}" in rc["text.latex.preamble"]
+
+
+def test_pubify_rc_context_applies_and_restores_rcparams():
+    original_usetex = plt.matplotlib.rcParams["text.usetex"]
+    original_font_family = plt.matplotlib.rcParams["font.family"]
+    original_figure_dpi = plt.matplotlib.rcParams["figure.dpi"]
+
+    with pubify_rc_context(template=ARTICLE_TEMPLATE):
+        assert plt.matplotlib.rcParams["text.usetex"] == original_usetex
+        assert plt.matplotlib.rcParams["font.family"] == ["serif"]
+        assert plt.matplotlib.rcParams["font.size"] == 12.0
+        assert plt.matplotlib.rcParams["figure.dpi"] == original_figure_dpi
+
+    assert plt.matplotlib.rcParams["text.usetex"] == original_usetex
+    assert plt.matplotlib.rcParams["font.family"] == original_font_family
+
+
 def test_save_template_argument_overrides_context_default(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
@@ -253,13 +280,13 @@ def test_save_passes_rasterize_thresholds_to_helper(tmp_path, monkeypatch):
     plt.close(fig)
 
 
-def test_prepare_copy_hook_mutates_only_export_copy(tmp_path):
+def test_prepare_export_hook_mutates_only_export_copy(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
     original_linewidth = ax.lines[0].get_linewidth()
     observed = {}
 
-    def prepare_copy(fig_copy):
+    def prepare_export(fig_copy):
         observed["called"] = True
         observed["same_object"] = fig_copy is fig
         fig_copy.axes[0].lines[0].set_linewidth(7.0)
@@ -269,7 +296,7 @@ def test_prepare_copy_hook_mutates_only_export_copy(tmp_path):
         "onewide",
         tmp_path / "edit-copy-demo.pdf",
         template=ARTICLE_TEMPLATE,
-        prepare_copy=prepare_copy,
+        prepare_export=prepare_export,
         skip_rasterize=True,
     )
 
@@ -281,7 +308,7 @@ def test_prepare_copy_hook_mutates_only_export_copy(tmp_path):
     plt.close(fig)
 
 
-def test_prepare_copy_can_receive_resolved_style(tmp_path):
+def test_prepare_export_can_receive_resolved_style(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1], label="demo")
     ax.legend()
@@ -289,7 +316,7 @@ def test_prepare_copy_can_receive_resolved_style(tmp_path):
     ax.set_title("Title")
     observed = {}
 
-    def prepare_copy(fig_copy, style):
+    def prepare_export(fig_copy, style):
         copied_ax = fig_copy.axes[0]
         observed["same_object"] = fig_copy is fig
         observed["style"] = style
@@ -314,7 +341,7 @@ def test_prepare_copy_can_receive_resolved_style(tmp_path):
             "tick_length_pt": 4.5,
         },
         keep_titles=True,
-        prepare_copy=prepare_copy,
+        prepare_export=prepare_export,
         skip_rasterize=True,
     )
 
@@ -374,13 +401,13 @@ def test_save_routes_hide_labels_through_adjust_helper(tmp_path, monkeypatch):
     plt.close(fig)
 
 
-def test_prepare_copy_runs_after_standard_cleanup(tmp_path):
+def test_prepare_export_runs_after_standard_cleanup(tmp_path):
     fig, ax = plt.subplots()
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     observed = {}
 
-    def prepare_copy(fig_copy):
+    def prepare_export(fig_copy):
         observed["xlabel"] = fig_copy.axes[0].get_xlabel()
         observed["ylabel"] = fig_copy.axes[0].get_ylabel()
 
@@ -390,7 +417,7 @@ def test_prepare_copy_runs_after_standard_cleanup(tmp_path):
         tmp_path / "prepare-copy-cleanup-order.pdf",
         template=ARTICLE_TEMPLATE,
         hide_labels=True,
-        prepare_copy=prepare_copy,
+        prepare_export=prepare_export,
         skip_rasterize=True,
     )
 
@@ -399,33 +426,33 @@ def test_prepare_copy_runs_after_standard_cleanup(tmp_path):
     plt.close(fig)
 
 
-def test_prepare_copy_rejects_incompatible_callback_signature(tmp_path):
+def test_prepare_export_rejects_incompatible_callback_signature(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
 
-    def prepare_copy(fig_copy, style, extra):
+    def prepare_export(fig_copy, style, extra):
         raise AssertionError("should not be called")
 
-    with pytest.raises(TypeError, match="prepare_copy must accept either one positional argument"):
+    with pytest.raises(TypeError, match="prepare_export must accept either one positional argument"):
         save_fig(
             fig,
             "onewide",
             tmp_path / "bad-prepare-copy-signature.pdf",
             template=ARTICLE_TEMPLATE,
-            prepare_copy=prepare_copy,
+            prepare_export=prepare_export,
             skip_rasterize=True,
         )
 
     plt.close(fig)
 
 
-def test_save_uses_template_styling_defaults_before_prepare_copy(tmp_path):
+def test_save_uses_template_styling_defaults_before_prepare_export(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1], label="demo")
     ax.legend()
     observed = {}
 
-    def prepare_copy(fig_copy):
+    def prepare_export(fig_copy):
         copied_ax = fig_copy.axes[0]
         observed["line_width"] = copied_ax.lines[0].get_linewidth()
         observed["spine_width"] = copied_ax.spines["bottom"].get_linewidth()
@@ -442,7 +469,7 @@ def test_save_uses_template_styling_defaults_before_prepare_copy(tmp_path):
             "axes_line_width_pt": 1.1,
             "tick_length_pt": 4.5,
         },
-        prepare_copy=prepare_copy,
+        prepare_export=prepare_export,
         skip_rasterize=True,
     )
 
@@ -453,13 +480,13 @@ def test_save_uses_template_styling_defaults_before_prepare_copy(tmp_path):
     plt.close(fig)
 
 
-def test_save_uses_template_text_style_defaults_before_prepare_copy(tmp_path):
+def test_save_uses_template_text_style_defaults_before_prepare_export(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1], label="demo")
     ax.legend()
     observed = {}
 
-    def prepare_copy(fig_copy):
+    def prepare_export(fig_copy):
         copied_ax = fig_copy.axes[0]
         observed["xlabel_size"] = copied_ax.xaxis.label.get_fontsize()
         observed["tick_size"] = copied_ax.get_xticklabels()[0].get_fontsize()
@@ -480,7 +507,7 @@ def test_save_uses_template_text_style_defaults_before_prepare_copy(tmp_path):
             "title_fontsize_pt": 15.0,
         },
         keep_titles=True,
-        prepare_copy=prepare_copy,
+        prepare_export=prepare_export,
         skip_rasterize=True,
     )
 
@@ -500,7 +527,7 @@ def test_save_skips_template_style_override_when_value_is_negative(tmp_path):
     ax.tick_params(width=1.7, length=6.0)
     observed = {}
 
-    def prepare_copy(fig_copy):
+    def prepare_export(fig_copy):
         copied_ax = fig_copy.axes[0]
         observed["line_width"] = copied_ax.lines[0].get_linewidth()
         observed["spine_width"] = copied_ax.spines["bottom"].get_linewidth()
@@ -517,7 +544,7 @@ def test_save_skips_template_style_override_when_value_is_negative(tmp_path):
             "axes_line_width_pt": -1,
             "tick_length_pt": -1,
         },
-        prepare_copy=prepare_copy,
+        prepare_export=prepare_export,
         skip_rasterize=True,
     )
 
@@ -541,7 +568,7 @@ def test_save_skips_template_text_style_override_when_value_is_negative(tmp_path
         text.set_fontsize(13.0)
     observed = {}
 
-    def prepare_copy(fig_copy):
+    def prepare_export(fig_copy):
         copied_ax = fig_copy.axes[0]
         observed["xlabel_size"] = copied_ax.xaxis.label.get_fontsize()
         observed["tick_size"] = copied_ax.get_xticklabels()[0].get_fontsize()
@@ -560,7 +587,7 @@ def test_save_skips_template_text_style_override_when_value_is_negative(tmp_path
             "title_fontsize_pt": -1,
         },
         keep_titles=True,
-        prepare_copy=prepare_copy,
+        prepare_export=prepare_export,
         skip_rasterize=True,
     )
 

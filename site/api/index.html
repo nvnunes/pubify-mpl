@@ -91,6 +91,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-bs-level="2"><a href="#pubify_rc_context" class="nav-link">pubify_rc_context</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-bs-level="2"><a href="#save_fig" class="nav-link">save_fig</a>
               <ul class="nav flex-column">
               </ul>
@@ -413,6 +417,21 @@ default template is used.</p>
           </tr>
       </tbody>
     </table>
+
+
+    </div>
+
+</div><h2 id="pubify_rc_context">pubify_rc_context</h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Apply the construction-time publication rc context implied by a pubify template.</p>
 
 
     </div>
@@ -807,19 +826,20 @@ line artists in vector outputs.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
-                <code>prepare_copy</code>
+                <code>prepare_export</code>
             </td>
             <td>
-                  <code><span title="pubify_mpl.export.PrepareCopyCallback">PrepareCopyCallback</span> | None</code>
+                  <code><span title="pubify_mpl.export.PrepareExportCallback">PrepareExportCallback</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Optional callback that receives the copied figure after
-the standard cleanup/style pass and can make additional changes
-before rasterization and export sizing. Callbacks may accept either
-<code>prepare_copy(fig_copy)</code> or <code>prepare_copy(fig_copy, style)</code>, where
-<code>style</code> is a <code>ResolvedStyle</code> carrying the resolved publication
-styling values.</p>
+                <p>Optional callback that receives the figure object that
+will be exported after the standard cleanup/style pass and can make
+additional changes before rasterization and export sizing. When
+<code>skip_clone=True</code>, this may be the original figure. Callbacks may
+accept either <code>prepare_export(fig_export)</code> or
+<code>prepare_export(fig_export, style)</code>, where <code>style</code> is a
+<code>ResolvedStyle</code> carrying the resolved publication styling values.</p>
               </div>
             </td>
             <td>
@@ -1209,7 +1229,7 @@ styling values.</p>
               </div>
             </td>
             <td>
-                  <code>&#39;serif&#39;</code>
+                  <code><span title="pubify_mpl.rc.PUBIFY_FONT_FAMILY">PUBIFY_FONT_FAMILY</span></code>
             </td>
           </tr>
       </tbody>

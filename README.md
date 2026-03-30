@@ -174,13 +174,28 @@ with use_template(PUBIFY_TEMPLATES["thesis"]):
     save_fig(fig2, "twowide", f"{figures_dir}/plot-2.pdf")
 ```
 
-Lower-level figure adjustment helpers and `prepare_copy(...)` are available in the Python API reference for advanced use.
-
-For figure-specific styling that pubify cannot discover generically, `prepare_copy` may accept a second `style` argument:
+For figure construction that needs publication styling at creation time, `pubify_rc_context(...)` exposes the construction-time publication rc subset used for font and text defaults:
 
 ```python
-def prepare_copy(fig_copy, style):
-    for text in iter_custom_tick_labels(fig_copy.axes[0]):
+from pubify_mpl import pubify_rc_context
+
+with pubify_rc_context(PUBIFY_TEMPLATES["thesis"]):
+    fig = build_custom_plot()
+```
+
+The intended styling flow is:
+
+- build under `pubify_rc_context(...)` when artist creation depends on Matplotlib rc defaults
+- let `save_fig(...)` run its full export-time TeX setup plus normal generic cleanup and normalization afterward
+- use `prepare_export(...)` only for figure-specific artists that pubify still cannot reach generically
+
+Lower-level figure adjustment helpers and `prepare_export(...)` are available in the Python API reference for those final figure-specific cases.
+
+For figure-specific styling that pubify cannot discover generically, `prepare_export` may accept a second `style` argument:
+
+```python
+def prepare_export(fig_export, style):
+    for text in iter_custom_tick_labels(fig_export.axes[0]):
         text.set_fontfamily(style.font_family)
         text.set_fontsize(style.tick_labelsize_pt)
 ```

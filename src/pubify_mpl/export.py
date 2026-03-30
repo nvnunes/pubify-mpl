@@ -13,11 +13,12 @@ from matplotlib.figure import Figure
 
 from . import adjust
 from .layout import latex_layout_geometry, normalized_template
+from .rc import PUBIFY_FONT_FAMILY, resolved_pubify_rc
 
 
 @dataclass(frozen=True)
 class ResolvedStyle:
-    """Resolved export styling values available to ``prepare_copy`` callbacks."""
+    """Resolved export styling values available to ``prepare_export`` callbacks."""
 
     font_family: str
     base_fontsize_pt: float
@@ -30,7 +31,7 @@ class ResolvedStyle:
     tick_length_pt: float
 
 
-PrepareCopyCallback: TypeAlias = (
+PrepareExportCallback: TypeAlias = (
     Callable[[Figure], None]
     | Callable[[Figure, ResolvedStyle], None]
 )
@@ -149,15 +150,15 @@ def _resolved_style_from_template(
     )
 
 
-def _invoke_prepare_copy(
-    prepare_copy: PrepareCopyCallback,
+def _invoke_prepare_export(
+    prepare_export: PrepareExportCallback,
     fig_copy: Figure,
     style: ResolvedStyle,
 ) -> None:
     try:
-        signature = inspect.signature(prepare_copy)
+        signature = inspect.signature(prepare_export)
     except (TypeError, ValueError) as exc:
-        raise TypeError("prepare_copy must be an inspectable callable.") from exc
+        raise TypeError("prepare_export must be an inspectable callable.") from exc
 
     positional_capacity = 0
     has_varargs = False
@@ -172,21 +173,21 @@ def _invoke_prepare_copy(
 
     if positional_capacity == 0 and not has_varargs:
         raise TypeError(
-            "prepare_copy must accept at least one positional argument for the export figure."
+            "prepare_export must accept at least one positional argument for the export figure."
         )
 
     if not has_varargs and positional_capacity not in {1, 2}:
         raise TypeError(
-            "prepare_copy must accept either one positional argument (fig_copy) or "
-            "two positional arguments (fig_copy, style)."
+            "prepare_export must accept either one positional argument (fig_export) or "
+            "two positional arguments (fig_export, style)."
         )
 
     if has_varargs or positional_capacity >= 2:
-        prepare_copy(fig_copy, style)
+        prepare_export(fig_copy, style)
         return
 
     if positional_capacity == 1:
-        prepare_copy(fig_copy)
+        prepare_export(fig_copy)
         return
 
 
@@ -214,7 +215,7 @@ def save_fig(
     rasterize_image_pixel_threshold: int = 1_000_000,
     rasterize_line_vertex_threshold: int = 2000,
     extra_rcparams: dict[str, Any] | None = None,
-    prepare_copy: PrepareCopyCallback | None = None,
+    prepare_export: PrepareExportCallback | None = None,
     verbose: bool = False,
 ) -> None:
     """Export a copied Matplotlib figure for a named LaTeX layout.
@@ -255,17 +256,17 @@ def save_fig(
         rasterize_line_vertex_threshold: Vertex-count threshold for auto-rasterizing
             line artists in vector outputs.
         extra_rcparams: Additional Matplotlib rcParams applied during export.
-        prepare_copy: Optional callback that receives the copied figure after
-            the standard cleanup/style pass and can make additional changes
-            before rasterization and export sizing. Callbacks may accept either
-            `prepare_copy(fig_copy)` or `prepare_copy(fig_copy, style)`, where
-            `style` is a `ResolvedStyle` carrying the resolved publication
-            styling values.
+        prepare_export: Optional callback that receives the figure object that
+            will be exported after the standard cleanup/style pass and can make
+            additional changes before rasterization and export sizing. When
+            `skip_clone=True`, this may be the original figure. Callbacks may
+            accept either `prepare_export(fig_export)` or
+            `prepare_export(fig_export, style)`, where `style` is a
+            `ResolvedStyle` carrying the resolved publication styling values.
         verbose: Print export diagnostics.
     """
     resolved_template = normalized_template(template)
-    base_fontsize = resolved_template["base_fontsize_pt"]
-    font_family = "serif"
+    font_family = PUBIFY_FONT_FAMILY
     resolved_style = _resolved_style_from_template(
         resolved_template,
         font_family=font_family,
@@ -354,23 +355,12 @@ def save_fig(
         if hide_cbar:
             adjust.hide_cbar(keep_ax)
 
-        rc = {
-            "savefig.dpi": dpi,
-            "figure.dpi": dpi,
-            "font.size": base_fontsize,
-            "text.usetex": True,
-            "font.family": "serif",
-            "font.serif": ["Latin Modern Roman", "LMRoman10"],
-            "mathtext.fontset": "cm",
-            "text.latex.preamble": r"""
-\usepackage[T1]{fontenc}
-\usepackage[tracking]{microtype}
-\usepackage{amsmath}
-\usepackage{amssymb}
-""",
-        }
-        if extra_rcparams:
-            rc.update(extra_rcparams)
+        rc = resolved_pubify_rc(
+            template=resolved_template,
+            extra_rcparams=extra_rcparams,
+        )
+        rc["savefig.dpi"] = dpi
+        rc["figure.dpi"] = dpi
 
         with mpl.rc_context(mpl.rcParamsDefault):
             with mpl.rc_context(rc):
@@ -394,8 +384,8 @@ def save_fig(
                 if resolved_template["tick_length_pt"] >= 0:
                     adjust.set_tick_length(fig2, resolved_template["tick_length_pt"])
 
-                if prepare_copy is not None:
-                    _invoke_prepare_copy(prepare_copy, fig2, resolved_style)
+                if prepare_export is not None:
+                    _invoke_prepare_export(prepare_export, fig2, resolved_style)
 
                 rasterized_artists = []
                 if not skip_rasterize and _is_vector_output(output_filename):

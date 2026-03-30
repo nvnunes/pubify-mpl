@@ -5,6 +5,8 @@ from collections.abc import Iterable
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
+from .rc import PUBIFY_FONT_FAMILY
+
 
 def iter_axes(root: Figure | Axes) -> Iterable[Axes]:
     """Yield all axes reachable from a figure or axes tree without duplicates."""
@@ -241,7 +243,7 @@ def _as_figure(root: Figure | Axes) -> Figure:
     return root.figure if isinstance(root, Axes) else root
 
 
-def force_font_family(fig: Figure, family: str = "serif") -> None:
+def force_font_family(fig: Figure, family: str = PUBIFY_FONT_FAMILY) -> None:
     """Force a font family across figure text, labels, ticks, and legends.
 
     Args:

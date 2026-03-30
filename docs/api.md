@@ -20,6 +20,12 @@ This page is generated from the public Python docstrings.
     options:
       show_source: false
 
+## pubify_rc_context
+
+::: pubify_mpl.pubify_rc_context
+    options:
+      show_source: false
+
 ## save_fig
 
 ::: pubify_mpl.save_fig
