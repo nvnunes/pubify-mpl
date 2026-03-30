@@ -301,49 +301,25 @@
   \figstackrowtwocol{#3}{#4}%
 }
 
-\makeatletter
-\newcommand{\figtwo}[1]{%
-  \@ifnextchar\bgroup{\figtwodirect{#1}}{\expandafter\figtwodirect#1}%
+\newcommand{\figtwo}[2]{%
+  \figtwodirect{#1}{#2}%
 }
 
-\newcommand{\figtwowide}[1]{%
-  \@ifnextchar\bgroup{\figstackrowtwocol{#1}}{\expandafter\figstackrowtwocol#1}%
+\newcommand{\figtwowide}[2]{%
+  \figstackrowtwocol{#1}{#2}%
 }
 
-\newcommand{\figthree}[1]{%
-  \@ifnextchar\bgroup{\figthree@afterone{#1}}{\expandafter\figthreedirect#1}%
-}
-\newcommand{\figthree@afterone}[2]{%
-  \@ifnextchar\bgroup
-    {\figthreedirect{#1}{#2}}%
-    {\PackageError{pubify}{\string\figthree\space expects either 1 grouped row or 3 direct panels}{}}%
+\newcommand{\figthree}[3]{%
+  \figthreedirect{#1}{#2}{#3}%
 }
 
-\newcommand{\figthreewide}[1]{%
-  \@ifnextchar\bgroup{\figthreewide@afterone{#1}}{\expandafter\figstackrowthreecol#1}%
-}
-\newcommand{\figthreewide@afterone}[2]{%
-  \@ifnextchar\bgroup
-    {\figstackrowthreecol{#1}{#2}}%
-    {\PackageError{pubify}{\string\figthreewide\space expects either 1 grouped row or 3 direct panels}{}}%
+\newcommand{\figthreewide}[3]{%
+  \figstackrowthreecol{#1}{#2}{#3}%
 }
 
-\newcommand{\figfour}[1]{%
-  \@ifnextchar\bgroup
-    {\figfour@afterone{#1}}%
-    {\PackageError{pubify}{\string\figfour\space expects either 2 grouped rows or 4 direct panels}{}}%
+\newcommand{\figfour}[4]{%
+  \figfourdirect{#1}{#2}{#3}{#4}%
 }
-\newcommand{\figfour@afterone}[2]{%
-  \@ifnextchar\bgroup
-    {\figfour@aftertwo{#1}{#2}}%
-    {\expandafter\figstackrowtwocol#1\figgap\expandafter\figstackrowtwocol#2}%
-}
-\newcommand{\figfour@aftertwo}[3]{%
-  \@ifnextchar\bgroup
-    {\figfourdirect{#1}{#2}{#3}}%
-    {\PackageError{pubify}{\string\figfour\space expects either 2 grouped rows or 4 direct panels}{}}%
-}
-\makeatother
 
 
 \newcommand{\figsix}[3]{%

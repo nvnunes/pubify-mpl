@@ -271,24 +271,25 @@ For small multi-panel figures, you can use a direct panel-by-panel form:
 \figfloat[t]
   {
     \figtwowide
-    {\fig{figures/left.pdf}[Left panel][fig:left]}
-    {\fig{figures/right.pdf}[Right panel][fig:right]}
+      {\fig{figures/left.pdf}[Left panel][fig:left]}
+      {\fig{figures/right.pdf}[Right panel][fig:right]}
   }
   [Two-panel figure.]
   [fig:two-panel]
 ```
 
-All layouts also support the row-grouped form. For larger grids, that is the normal pattern:
+For larger grids, use the row-grouped form:
 
 ```tex
 \figfloat[t]
   {
-    \figfour
+    \figsix
     {{\fig{figures/a.pdf}}{\fig{figures/b.pdf}}}
     {{\fig{figures/c.pdf}}{\fig{figures/d.pdf}}}
+    {{\fig{figures/e.pdf}}{\fig{figures/f.pdf}}}
   }
-  [Four-panel figure.]
-  [fig:four-panel]
+  [Six-panel figure.]
+  [fig:six-panel]
 ```
 
 The supported layout macros are:

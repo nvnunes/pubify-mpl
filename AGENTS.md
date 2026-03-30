@@ -9,7 +9,6 @@ Keep this file limited to non-obvious repo conventions that are likely to save t
 - The debug TeX files have distinct purposes:
   - `debug-layout-gallery.tex`: full-gallery diagnostic entrypoint
   - `debug-subcaptions.tex`: focused subcaption-spacing fixture
-  - `debug-optional-syntax.tex`: compile coverage for the optional small-layout syntax forms
 - When developing TeX-side behavior, stage first and compile from `build/tex/`.
   - This keeps the staged `.tex`, `.aux`, `.fls`, `.fdb_latexmk`, and `.log` files together so you can inspect TeX warnings and `pubify` debug output in one place.
   - Example:
