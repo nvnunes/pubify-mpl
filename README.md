@@ -333,6 +333,10 @@ Template resolution:
 - otherwise, `pubify.sty` loads `pubify-template.tex` if it is present next to `pubify.sty`
 - otherwise, `pubify.sty` falls back to its built-in default lengths
 
+## Development Approach
+
+The implementation is intentionally pragmatic. Priority was given to producing a useful, validated tool rather than to maximizing internal elegance or generality. Parts of the implementation were developed with AI-assisted workflows. Development effort was focused on documented behavior, intended performance, and validation rather than on highly refined internal structure.
+
 ## License
 
 MIT
