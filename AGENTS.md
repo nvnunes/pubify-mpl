@@ -24,6 +24,11 @@ Keep this file limited to non-obvious repo conventions that are likely to save t
   - Do not hand-edit them.
 - The built-in fallback template is public as `pubify_mpl.DEFAULT_TEMPLATE`.
   - The README quick-start block and notebook template are generated/checked against that constant, so update it first.
+- Exported figures use built-in LaTeX serif font-family policy.
+  - Template keys control sizes and spacing, not font family.
+- Free text is intentionally treated differently from standard plot text.
+  - Axis labels, tick labels, legends, and titles are size-normalized.
+  - Free `ax.text(...)` / `fig.text(...)` is not font-size-normalized by default; this is intentional, not an omission.
 - If template geometry or typography seems wrong, use `\figprintlayoutspec` to measure the LaTeX side and copy those values back into the Python template configuration.
 - The repo-local pre-commit hook mutates tracked files.
   - It regenerates the notebook, refreshes the gallery PDF, and runs `mkdocs build --strict`.

@@ -80,6 +80,17 @@ Releases are standardized around the checked-in script:
 
 This is the canonical release path. It performs the full release flow and aborts immediately if any requirement is not met.
 
+### Branch Flow
+
+The intended branch workflow is:
+
+1. develop new work on `develop`
+2. fast-forward `main` to the intended release state
+3. run the release from `main`
+4. fast-forward `develop` back to the released `main` state
+
+The release script itself must run from `main`, but the normal development branch is `develop`.
+
 ### Before Running the Release Script
 
 Make the release edits manually first:
