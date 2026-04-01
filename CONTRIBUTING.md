@@ -125,6 +125,7 @@ It then runs, in order:
 9. `twine upload`
 
 The script builds fresh artifacts for that run and uploads only those artifacts.
+Because the pre-commit hook regenerates tracked outputs, the release script restores the known generated hook outputs from `HEAD` before its final clean-worktree check. Any remaining changes after that are treated as a real release blocker.
 
 ### PyPI Credentials
 

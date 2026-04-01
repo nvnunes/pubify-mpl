@@ -33,9 +33,9 @@ Technically, `save_fig(...)` does not modify your original Matplotlib figure in 
 1. makes a copy of the figure
 2. applies publication styling and any requested cleanup only to that copy
 3. resizes the copy to match the requested width or named LaTeX layout
-4. saves the copy to PDF
+4. saves the copy to the requested output format
 
-That means your original interactive figure stays unchanged in Python. This is important if you want to keep using the same figure object in a notebook or script after export.
+That means your original interactive figure stays unchanged in Python. This is important if you want to keep using the same figure object in a notebook or script after export. If the output filename has no suffix, `save_fig(...)` defaults to PDF.
 
 On the export side, `save_fig(...)` can:
 
@@ -193,7 +193,7 @@ The intended styling flow is:
 
 Lower-level figure adjustment helpers and `prepare_export(...)` are available in the Python API reference for those final figure-specific cases.
 
-For figure-specific styling that pubify cannot discover generically, `prepare_export` may accept a second `style` argument:
+For figure-specific styling that pubify cannot discover generically, `prepare_export(...)` may accept a second `style` argument:
 
 ```python
 def prepare_export(fig_export, style):

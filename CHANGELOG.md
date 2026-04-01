@@ -4,7 +4,6 @@
 
 - Added `skip_clone` to `save_fig(...)`.
 - Added `pubify_rc_context(...)` for figure construction that depends on publication-style Matplotlib rc defaults.
-- Renamed `prepare_export(...)` to `prepare_copy(...)`.
 - Simplified the LaTeX syntax for small layouts.
 - Fixed wrapped `\fig{...}` panels in direct layouts so subcaptions and labels compile correctly.
 

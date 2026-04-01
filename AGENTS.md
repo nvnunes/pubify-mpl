@@ -9,6 +9,10 @@ Keep this file limited to non-obvious repo conventions that are likely to save t
 - The debug TeX files have distinct purposes:
   - `debug-layout-gallery.tex`: full-gallery diagnostic entrypoint
   - `debug-subcaptions.tex`: focused subcaption-spacing fixture
+- The LaTeX layout syntax is intentionally split by layout size.
+  - Small layouts use direct panel-by-panel syntax: `\figtwo{...}{...}`, `\figtwowide{...}{...}`, `\figthree{...}{...}{...}`, `\figthreewide{...}{...}{...}`, `\figfour{...}{...}{...}{...}`.
+  - Larger layouts use grouped row syntax such as `\figsix`, `\fignine`, and above.
+  - Do not reintroduce overloaded dual-syntax parsing for the same macro names; that was removed because it was too brittle.
 - When developing TeX-side behavior, stage first and compile from `build/tex/`.
   - This keeps the staged `.tex`, `.aux`, `.fls`, `.fdb_latexmk`, and `.log` files together so you can inspect TeX warnings and `pubify` debug output in one place.
   - Example:
@@ -35,3 +39,4 @@ Keep this file limited to non-obvious repo conventions that are likely to save t
   - run `sh .githooks/pre-commit`
 - Releases should go through `./.conda/bin/python3.12 scripts/release.py` from `main`.
   - The release script enforces the matching `CHANGELOG.md` entry, runs the full checks, tags, pushes, and uploads.
+  - The release script intentionally discards the known generated outputs from the pre-commit hook (`examples/quickstart.ipynb`, `gallery/layout-gallery.pdf`, `site/`) before its final clean-worktree check.
