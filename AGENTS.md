@@ -33,3 +33,5 @@ Keep this file limited to non-obvious repo conventions that are likely to save t
 - Practical local verification sequence after nontrivial changes:
   - run the full pytest command
   - run `sh .githooks/pre-commit`
+- Releases should go through `./.conda/bin/python3.12 scripts/release.py` from `main`.
+  - The release script enforces the matching `CHANGELOG.md` entry, runs the full checks, tags, pushes, and uploads.

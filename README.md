@@ -9,6 +9,8 @@ It combines two parts of a publication workflow:
 
 This package is meant for researchers who already use Matplotlib and LaTeX and want a cleaner path from Python plots to publication-ready figures. It is not a replacement for Matplotlib. It sits at the export and layout stage.
 
+See [CHANGELOG.md](https://github.com/nvnunes/pubify-mpl/blob/main/CHANGELOG.md) for release history and user-visible changes, and [CONTRIBUTING.md](https://github.com/nvnunes/pubify-mpl/blob/main/CONTRIBUTING.md) for contributor and release workflow guidance.
+
 ## Requirements
 
 - Python 3.10+
