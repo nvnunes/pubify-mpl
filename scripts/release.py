@@ -10,6 +10,7 @@ import sys
 import tempfile
 
 from release_support import (
+    dirty_paths,
     ensure_clean_worktree,
     ensure_release_branch,
     read_project_version,
@@ -21,6 +22,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 PYPROJECT_PATH = REPO_ROOT / "pyproject.toml"
 CHANGELOG_PATH = REPO_ROOT / "CHANGELOG.md"
 DEFAULT_TWINE_CONFIG = Path.home() / ".pypirc-pubify-mpl"
+GENERATED_ARTIFACT_PATHS = (
+    "examples/quickstart.ipynb",
+    "gallery/layout-gallery.pdf",
+    "site",
+)
 
 
 def _print_step(index: int, message: str) -> None:
@@ -54,6 +60,10 @@ def _tag_exists(tag_name: str) -> bool:
         text=True,
     )
     return result.returncode == 0
+
+
+def _restore_generated_artifacts() -> None:
+    _run(["git", "checkout", "HEAD", "--", *GENERATED_ARTIFACT_PATHS])
 
 
 def _build_artifacts(version: str) -> list[Path]:
@@ -108,24 +118,36 @@ def main() -> int:
     _run(["sh", ".githooks/pre-commit"])
 
     _print_step(4, "Re-checking worktree after pre-commit")
-    ensure_clean_worktree(_git_status(), context="after pre-commit")
+    status_after_hook = _git_status()
+    if status_after_hook:
+        changed_paths = dirty_paths(status_after_hook)
+        generated_paths = set(GENERATED_ARTIFACT_PATHS)
+        only_generated_artifacts_changed = all(
+            path in generated_paths or any(path.startswith(f"{prefix}/") for prefix in generated_paths)
+            for path in changed_paths
+        )
+        if only_generated_artifacts_changed:
+            _print_step(5, "Discarding regenerated tracked artifacts from the hook")
+            _restore_generated_artifacts()
+            status_after_hook = _git_status()
+    ensure_clean_worktree(status_after_hook, context="after pre-commit")
 
-    _print_step(5, "Building fresh distribution artifacts")
+    _print_step(6, "Building fresh distribution artifacts")
     artifacts = _build_artifacts(version)
 
-    _print_step(6, "Running twine check")
+    _print_step(7, "Running twine check")
     _run([sys.executable, "-m", "twine", "check", *(str(path) for path in artifacts)])
 
-    _print_step(7, f"Creating git tag {tag_name}")
+    _print_step(8, f"Creating git tag {tag_name}")
     _run(["git", "tag", tag_name])
 
-    _print_step(8, "Pushing main")
+    _print_step(9, "Pushing main")
     _run(["git", "push", "origin", "main"])
 
-    _print_step(9, f"Pushing tag {tag_name}")
+    _print_step(10, f"Pushing tag {tag_name}")
     _run(["git", "push", "origin", tag_name])
 
-    _print_step(10, "Uploading artifacts to PyPI")
+    _print_step(11, "Uploading artifacts to PyPI")
     _run(
         [
             sys.executable,

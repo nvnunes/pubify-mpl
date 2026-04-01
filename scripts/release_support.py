@@ -48,3 +48,15 @@ def ensure_release_branch(branch: str, *, release_branch: str = "main") -> None:
 def ensure_clean_worktree(status_output: str, *, context: str) -> None:
     if status_output.strip():
         raise ValueError(f"Git worktree must be clean {context}.")
+
+
+def dirty_paths(status_output: str) -> list[str]:
+    paths: list[str] = []
+    for line in status_output.splitlines():
+        if not line:
+            continue
+        path = line[3:]
+        if " -> " in path:
+            path = path.split(" -> ", 1)[1]
+        paths.append(path)
+    return paths

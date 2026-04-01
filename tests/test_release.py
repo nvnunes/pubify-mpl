@@ -10,6 +10,7 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 from release_support import (
+    dirty_paths,
     ensure_clean_worktree,
     ensure_release_branch,
     read_project_version,
@@ -58,3 +59,13 @@ def test_release_branch_check_rejects_non_main():
 def test_clean_worktree_check_rejects_dirty_status():
     with pytest.raises(ValueError, match="clean"):
         ensure_clean_worktree(" M README.md", context="before release")
+
+
+def test_dirty_paths_extracts_paths_from_porcelain_output():
+    status_output = "M  gallery/layout-gallery.pdf\nA  site/index.html\nR  old -> new\n"
+
+    assert dirty_paths(status_output) == [
+        "gallery/layout-gallery.pdf",
+        "site/index.html",
+        "new",
+    ]
