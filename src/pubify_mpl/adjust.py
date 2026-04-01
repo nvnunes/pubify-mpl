@@ -8,6 +8,13 @@ from matplotlib.figure import Figure
 from .rc import PUBIFY_FONT_FAMILY
 
 
+def _iter_figure_shared_labels(fig: Figure) -> Iterable:
+    for attr in ("_supxlabel", "_supylabel"):
+        label = getattr(fig, attr, None)
+        if label is not None:
+            yield label
+
+
 def iter_axes(root: Figure | Axes) -> Iterable[Axes]:
     """Yield all axes reachable from a figure or axes tree without duplicates."""
 
@@ -64,7 +71,7 @@ def clear_titles(fig: Figure | Axes) -> None:
 
 
 def hide_labels(fig: Figure | Axes) -> None:
-    """Remove x/y axis labels on a figure or axes tree.
+    """Remove x/y axis labels and shared figure labels on a figure or axes tree.
 
     Args:
         fig: Figure or axes whose labels should be removed.
@@ -72,6 +79,9 @@ def hide_labels(fig: Figure | Axes) -> None:
     for ax in iter_axes(fig):
         ax.set_xlabel("")
         ax.set_ylabel("")
+    if isinstance(fig, Figure):
+        for label in _iter_figure_shared_labels(fig):
+            label.set_text("")
 
 
 def hide_annotations(fig: Figure | Axes) -> None:
@@ -193,15 +203,18 @@ def set_tick_length(fig: Figure | Axes, tick_length: float) -> None:
 
 
 def set_axes_labelsize(fig: Figure | Axes, axes_labelsize: float) -> None:
-    """Set x/y axis label font size on a figure or axes tree.
+    """Set x/y axis label and shared figure label font size.
 
     Args:
         fig: Figure or axes whose axis-label text should be updated.
         axes_labelsize: New axis-label font size.
     """
-    for ax in iter_styled_axes(_as_figure(fig)):
+    figure = _as_figure(fig)
+    for ax in iter_styled_axes(figure):
         ax.xaxis.label.set_fontsize(axes_labelsize)
         ax.yaxis.label.set_fontsize(axes_labelsize)
+    for label in _iter_figure_shared_labels(figure):
+        label.set_fontsize(axes_labelsize)
 
 
 def set_tick_labelsize(fig: Figure | Axes, tick_labelsize: float) -> None:
@@ -254,6 +267,8 @@ def force_font_family(fig: Figure, family: str = PUBIFY_FONT_FAMILY) -> None:
     """
     for text in fig.texts:
         text.set_fontfamily(family)
+    for label in _iter_figure_shared_labels(fig):
+        label.set_fontfamily(family)
 
     for ax in iter_styled_axes(fig):
         ax.title.set_fontfamily(family)

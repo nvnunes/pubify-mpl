@@ -244,7 +244,8 @@ def save_fig(
         force_aspect: Optional aspect ratio override for the exported copy.
         dpi: Export DPI for the copied figure.
         keep_titles: Keep axis titles on the copied figure instead of clearing them.
-        hide_labels: Remove axis labels from the copied figure.
+        hide_labels: Remove axis labels and shared figure labels from the copied
+            figure.
         hide_annotations: Remove `ax.text(...)` annotations from the copied figure.
         hide_ticks: Remove tick marks and tick labels from the copied figure.
         hide_tick_labels: Remove tick labels while keeping tick positions.

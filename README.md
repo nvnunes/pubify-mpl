@@ -266,7 +266,7 @@ Some `save_fig()` options control how the exported figure fits into the LaTeX la
 
 Other options let you simplify the exported figure content without changing the original figure in Python:
 
-- `hide_labels=True`: remove axis labels from the exported copy
+- `hide_labels=True`: remove axis labels and shared figure labels from the exported copy
 - `hide_grid=True`: disable the grid on the exported copy
 - `hide_cbar=True`: remove attached colorbars and all colorbar axes
 - `hide_annotations=True`: remove `ax.text(...)` annotations from the exported copy

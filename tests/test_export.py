@@ -59,6 +59,8 @@ def make_composite_figure(*, with_shared_colorbar: bool = True):
         fig.subplots_adjust(wspace=0.3, top=0.82)
 
     fig.suptitle("Composite Figure")
+    fig.supxlabel("Shared X")
+    fig.supylabel("Shared Y")
     return fig, axs
 def test_save_basic_line_plot(tmp_path):
     fig, ax = plt.subplots()
@@ -101,6 +103,8 @@ def test_save_figure_preserves_subplots_and_shared_colorbar(tmp_path):
         observed["axes_count"] = len(fig_copy.axes)
         observed["titles"] = [ax.get_title() for ax in fig_copy.axes if ax.get_title()]
         observed["suptitle"] = fig_copy._suptitle.get_text() if fig_copy._suptitle else None
+        observed["supxlabel"] = fig_copy._supxlabel.get_text() if fig_copy._supxlabel else None
+        observed["supylabel"] = fig_copy._supylabel.get_text() if fig_copy._supylabel else None
         observed["has_scale_label"] = any(ax.get_ylabel() == "Scale" for ax in fig_copy.axes)
 
     save_fig(
@@ -117,6 +121,8 @@ def test_save_figure_preserves_subplots_and_shared_colorbar(tmp_path):
     assert observed["axes_count"] == 3
     assert observed["titles"] == ["Panel 0", "Panel 1"]
     assert observed["suptitle"] == "Composite Figure"
+    assert observed["supxlabel"] == "Shared X"
+    assert observed["supylabel"] == "Shared Y"
     assert observed["has_scale_label"] is True
     assert (tmp_path / "composite-shared-cbar.pdf").exists()
     plt.close(fig)
@@ -455,6 +461,8 @@ def test_save_figure_cleanup_flags_apply_across_all_axes(tmp_path):
     def prepare_export(fig_copy):
         observed["xlabels"] = [ax.get_xlabel() for ax in fig_copy.axes]
         observed["ylabels"] = [ax.get_ylabel() for ax in fig_copy.axes]
+        observed["supxlabel"] = fig_copy._supxlabel.get_text() if fig_copy._supxlabel else None
+        observed["supylabel"] = fig_copy._supylabel.get_text() if fig_copy._supylabel else None
         observed["texts"] = [len(ax.texts) for ax in fig_copy.axes]
         observed["xticks"] = [list(ax.get_xticks()) for ax in fig_copy.axes]
         observed["yticks"] = [list(ax.get_yticks()) for ax in fig_copy.axes]
@@ -479,6 +487,8 @@ def test_save_figure_cleanup_flags_apply_across_all_axes(tmp_path):
 
     assert observed["xlabels"] == ["", ""]
     assert observed["ylabels"] == ["", ""]
+    assert observed["supxlabel"] == ""
+    assert observed["supylabel"] == ""
     assert observed["texts"] == [0, 0]
     assert observed["xticks"] == [[], []]
     assert observed["yticks"] == [[], []]
@@ -723,11 +733,15 @@ def test_save_uses_template_text_style_defaults_before_prepare_export(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1], label="demo")
     ax.legend()
+    fig.supxlabel("Shared X")
+    fig.supylabel("Shared Y")
     observed = {}
 
     def prepare_export(fig_copy):
         copied_ax = fig_copy.axes[0]
         observed["xlabel_size"] = copied_ax.xaxis.label.get_fontsize()
+        observed["supxlabel_size"] = fig_copy._supxlabel.get_fontsize() if fig_copy._supxlabel else None
+        observed["supylabel_size"] = fig_copy._supylabel.get_fontsize() if fig_copy._supylabel else None
         observed["tick_size"] = copied_ax.get_xticklabels()[0].get_fontsize()
         observed["legend_size"] = copied_ax.get_legend().get_texts()[0].get_fontsize()
         observed["title_size"] = copied_ax.title.get_fontsize()
@@ -751,6 +765,8 @@ def test_save_uses_template_text_style_defaults_before_prepare_export(tmp_path):
     )
 
     assert observed["xlabel_size"] == 14.0
+    assert observed["supxlabel_size"] == 14.0
+    assert observed["supylabel_size"] == 14.0
     assert observed["tick_size"] == 12.5
     assert observed["legend_size"] == 10.5
     assert observed["title_size"] == 15.0
@@ -880,11 +896,15 @@ def test_force_font_family_updates_axis_text_annotations():
 def test_force_font_family_updates_figure_text():
     fig, ax = plt.subplots()
     fig.text(0.5, 0.5, "figure note")
+    fig.supxlabel("Shared X")
+    fig.supylabel("Shared Y")
     fig2 = clone_figure_pickle(fig)
 
     force_font_family(fig2)
 
     assert fig2.texts[0].get_fontfamily() == ["serif"]
+    assert fig2._supxlabel.get_fontfamily() == ["serif"]
+    assert fig2._supylabel.get_fontfamily() == ["serif"]
 
     plt.close(fig)
     plt.close(fig2)

@@ -28,6 +28,8 @@ def test_hide_labels_clears_labels_on_main_and_inset_axes():
     fig, ax = plt.subplots()
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
+    fig.supxlabel("Shared X")
+    fig.supylabel("Shared Y")
     inset = ax.inset_axes([0.6, 0.1, 0.3, 0.3])
     inset.set_xlabel("Inset X")
     inset.set_ylabel("Inset Y")
@@ -38,6 +40,8 @@ def test_hide_labels_clears_labels_on_main_and_inset_axes():
     assert ax.get_ylabel() == ""
     assert inset.get_xlabel() == ""
     assert inset.get_ylabel() == ""
+    assert fig._supxlabel.get_text() == ""
+    assert fig._supylabel.get_text() == ""
     plt.close(fig)
 
 
@@ -132,6 +136,8 @@ def test_hide_cbar_removes_colorbar_axes():
 def test_force_font_family_updates_axis_and_figure_text():
     fig, ax = plt.subplots()
     fig.text(0.5, 0.5, "figure")
+    fig.supxlabel("Shared X")
+    fig.supylabel("Shared Y")
     ax.set_xlabel("X")
     ax.set_ylabel("Y")
     ax.text(0.5, 0.5, "demo", transform=ax.transAxes)
@@ -139,9 +145,27 @@ def test_force_font_family_updates_axis_and_figure_text():
     force_font_family(fig)
 
     assert fig.texts[0].get_fontfamily() == ["serif"]
+    assert fig._supxlabel.get_fontfamily() == ["serif"]
+    assert fig._supylabel.get_fontfamily() == ["serif"]
     assert ax.xaxis.label.get_fontfamily() == ["serif"]
     assert ax.yaxis.label.get_fontfamily() == ["serif"]
     assert ax.texts[0].get_fontfamily() == ["serif"]
+    plt.close(fig)
+
+
+def test_set_axes_labelsize_updates_shared_figure_labels():
+    fig, ax = plt.subplots()
+    fig.supxlabel("Shared X")
+    fig.supylabel("Shared Y")
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+
+    set_axes_labelsize(fig, 12.0)
+
+    assert fig._supxlabel.get_fontsize() == 12.0
+    assert fig._supylabel.get_fontsize() == 12.0
+    assert ax.xaxis.label.get_fontsize() == 12.0
+    assert ax.yaxis.label.get_fontsize() == 12.0
     plt.close(fig)
 
 
