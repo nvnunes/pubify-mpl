@@ -39,6 +39,8 @@ That means your original interactive figure stays unchanged in Python. This is i
 
 On the export side, `save_fig(...)` can:
 
+- export a full Matplotlib figure composition when you pass a `Figure`
+- export a single panel when you pass an `Axes`
 - remove titles, labels, annotations, grids, or colorbars from the exported copy
 - scales your copied figure to match the named layout
 - use LaTeX text rendering during export so fonts and math match the document more closely
@@ -176,6 +178,25 @@ with use_template(PUBIFY_TEMPLATES["thesis"]):
     save_fig(fig2, "twowide", f"{figures_dir}/plot-2.pdf")
 ```
 
+`save_fig(...)` generally follows Matplotlib intent directly:
+
+- pass a `Figure` to export the full composed figure as one artifact
+- pass an `Axes` to export only that selected panel
+
+This is useful when you need a custom Matplotlib composition that pubify's LaTeX layouts do not model directly, such as two subplots with one shared colorbar. In those cases, build the composition in Matplotlib and export the whole figure for a simple LaTeX slot such as `"one"` or `"onewide"`:
+
+```python
+fig, axs = plt.subplots(1, 2, figsize=(6, 3))
+
+im = axs[0].imshow(data_left)
+axs[1].imshow(data_right, vmin=im.norm.vmin, vmax=im.norm.vmax, cmap=im.cmap)
+fig.colorbar(im, ax=axs, shrink=0.85)
+
+save_fig(fig, "onewide", f"{figures_dir}/comparison.pdf", template=PUBIFY_TEMPLATES["thesis"])
+```
+
+This works well for many ordinary composed Matplotlib figures, including cases like shared colorbars, but arbitrary complex composite figures are not yet guaranteed to export perfectly.
+
 For figure construction that needs publication styling at creation time, `pubify_rc_context(...)` exposes the construction-time publication rc subset used for font and text defaults:
 
 ```python
@@ -247,7 +268,7 @@ Other options let you simplify the exported figure content without changing the 
 
 - `hide_labels=True`: remove axis labels from the exported copy
 - `hide_grid=True`: disable the grid on the exported copy
-- `hide_cbar=True`: remove a colorbar when exporting a single-axes panel
+- `hide_cbar=True`: remove attached colorbars and all colorbar axes
 - `hide_annotations=True`: remove `ax.text(...)` annotations from the exported copy
 
 ## LaTeX Macros

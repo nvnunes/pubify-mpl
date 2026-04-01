@@ -446,12 +446,14 @@ default template is used.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Export a copied Matplotlib figure for a named LaTeX layout.</p>
+        <p>Export a copied Matplotlib figure or axes for a named LaTeX layout.</p>
 <p><code>save_fig(...)</code> normally never modifies the original figure in place. It
 clones the figure, applies publication styling and any requested cleanup to
 that copy, resizes the copy to fit the selected layout, and writes the
-exported file. If <code>skip_clone=True</code>, export operates on the original figure.
-If <code>filename</code> has no suffix, <code>.pdf</code> is used by default.</p>
+exported file. Passing a <code>Figure</code> exports the full composed figure as one
+artifact. Passing an <code>Axes</code> exports only that axes panel, optionally keeping
+an attached colorbar. If <code>skip_clone=True</code>, export operates on the original
+figure. If <code>filename</code> has no suffix, <code>.pdf</code> is used by default.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -474,7 +476,8 @@ If <code>filename</code> has no suffix, <code>.pdf</code> is used by default.</p
             </td>
             <td>
               <div class="doc-md-description">
-                <p><code>matplotlib.figure.Figure</code> or <code>matplotlib.axes.Axes</code> to export.</p>
+                <p><code>matplotlib.figure.Figure</code> to export as a full composed
+figure, or <code>matplotlib.axes.Axes</code> to export as a single panel.</p>
               </div>
             </td>
             <td>
@@ -718,7 +721,8 @@ chosen layout budget.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Remove a colorbar when exporting a single-axes panel.</p>
+                <p>Remove attached colorbars and all colorbar axes from the
+copied figure.</p>
               </div>
             </td>
             <td>
@@ -835,7 +839,9 @@ line artists in vector outputs.</p>
               <div class="doc-md-description">
                 <p>Optional callback that receives the figure object that
 will be exported after the standard cleanup/style pass and can make
-additional changes before rasterization and export sizing. When
+additional changes before rasterization and export sizing. For
+<code>Figure</code> input, this is the full composed figure copy. For <code>Axes</code>
+input, this is the isolated single-panel figure copy. When
 <code>skip_clone=True</code>, this may be the original figure. Callbacks may
 accept either <code>prepare_export(fig_export)</code> or
 <code>prepare_export(fig_export, style)</code>, where <code>style</code> is a

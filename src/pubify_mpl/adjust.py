@@ -59,6 +59,8 @@ def clear_titles(fig: Figure | Axes) -> None:
     """
     for ax in iter_axes(fig):
         ax.set_title("")
+    if isinstance(fig, Figure) and getattr(fig, "_suptitle", None) is not None:
+        fig._suptitle.set_text("")
 
 
 def hide_labels(fig: Figure | Axes) -> None:

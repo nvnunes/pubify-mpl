@@ -218,16 +218,19 @@ def save_fig(
     prepare_export: PrepareExportCallback | None = None,
     verbose: bool = False,
 ) -> None:
-    """Export a copied Matplotlib figure for a named LaTeX layout.
+    """Export a copied Matplotlib figure or axes for a named LaTeX layout.
 
     `save_fig(...)` normally never modifies the original figure in place. It
     clones the figure, applies publication styling and any requested cleanup to
     that copy, resizes the copy to fit the selected layout, and writes the
-    exported file. If `skip_clone=True`, export operates on the original figure.
-    If `filename` has no suffix, `.pdf` is used by default.
+    exported file. Passing a `Figure` exports the full composed figure as one
+    artifact. Passing an `Axes` exports only that axes panel, optionally keeping
+    an attached colorbar. If `skip_clone=True`, export operates on the original
+    figure. If `filename` has no suffix, `.pdf` is used by default.
 
     Args:
-        fig_or_ax: `matplotlib.figure.Figure` or `matplotlib.axes.Axes` to export.
+        fig_or_ax: `matplotlib.figure.Figure` to export as a full composed
+            figure, or `matplotlib.axes.Axes` to export as a single panel.
         layout: Named layout such as `"onewide"`, `"twowide"`, or `"four"`.
         filename: Output path for the exported figure. If no suffix is given,
             `.pdf` is used. Relative paths are created if needed; absolute paths
@@ -246,7 +249,8 @@ def save_fig(
         hide_ticks: Remove tick marks and tick labels from the copied figure.
         hide_tick_labels: Remove tick labels while keeping tick positions.
         hide_grid: Disable the grid on the copied figure.
-        hide_cbar: Remove a colorbar when exporting a single-axes panel.
+        hide_cbar: Remove attached colorbars and all colorbar axes from the
+            copied figure.
         skip_clone: Skip the pickle-clone step and export the original figure in place.
         skip_rasterize: Disable the vector-output rasterization heuristic.
         rasterize_scatter_threshold: Collection-size threshold for auto-rasterizing
@@ -258,7 +262,9 @@ def save_fig(
         extra_rcparams: Additional Matplotlib rcParams applied during export.
         prepare_export: Optional callback that receives the figure object that
             will be exported after the standard cleanup/style pass and can make
-            additional changes before rasterization and export sizing. When
+            additional changes before rasterization and export sizing. For
+            `Figure` input, this is the full composed figure copy. For `Axes`
+            input, this is the isolated single-panel figure copy. When
             `skip_clone=True`, this may be the original figure. Callbacks may
             accept either `prepare_export(fig_export)` or
             `prepare_export(fig_export, style)`, where `style` is a
@@ -284,12 +290,14 @@ def save_fig(
     if subcaption_lines < 0:
         raise ValueError("subcaption_lines must be non-negative.")
 
+    export_full_figure = False
     if isinstance(fig_or_ax, mpl.axes.Axes):
         fig = fig_or_ax.figure
         axis_idx = fig.axes.index(fig_or_ax)
     elif isinstance(fig_or_ax, mpl.figure.Figure):
         fig = fig_or_ax
-        axis_idx = 0
+        axis_idx = None
+        export_full_figure = True
     else:
         raise TypeError("fig_or_ax must be a Figure or Axes instance.")
 
@@ -318,22 +326,25 @@ def save_fig(
             ) from exc
 
     try:
-        keep_ax = fig2.axes[axis_idx]
-        keep_extra_axes = set()
+        export_ax = None
+        if not export_full_figure:
+            assert axis_idx is not None
+            export_ax = fig2.axes[axis_idx]
+            keep_extra_axes = set()
 
-        if not hide_cbar:
-            for child in keep_ax.get_children():
-                cb = getattr(child, "colorbar", None)
-                if cb is not None and getattr(cb, "ax", None) is not None:
-                    keep_extra_axes.add(cb.ax)
+            if not hide_cbar:
+                for child in export_ax.get_children():
+                    cb = getattr(child, "colorbar", None)
+                    if cb is not None and getattr(cb, "ax", None) is not None:
+                        keep_extra_axes.add(cb.ax)
 
-        for ax in list(fig2.axes):
-            if ax is keep_ax or ax in keep_extra_axes:
-                continue
-            fig2.delaxes(ax)
+            for ax in list(fig2.axes):
+                if ax is export_ax or ax in keep_extra_axes:
+                    continue
+                fig2.delaxes(ax)
 
-        if len(fig2.axes) == 1:
-            fig2.axes[0].set_subplotspec(gridspec.GridSpec(1, 1, figure=fig2)[0])
+            if len(fig2.axes) == 1:
+                fig2.axes[0].set_subplotspec(gridspec.GridSpec(1, 1, figure=fig2)[0])
 
         if not keep_titles:
             adjust.clear_titles(fig2)
@@ -350,10 +361,14 @@ def save_fig(
             adjust.hide_tick_labels(fig2)
 
         if hide_grid:
-            adjust.hide_grid(keep_ax)
+            adjust.hide_grid(fig2)
 
         if hide_cbar:
-            adjust.hide_cbar(keep_ax)
+            if export_full_figure:
+                adjust.hide_cbar(fig2)
+            else:
+                assert export_ax is not None
+                adjust.hide_cbar(export_ax)
 
         rc = resolved_pubify_rc(
             template=resolved_template,
@@ -399,8 +414,12 @@ def save_fig(
                 renderer = _get_renderer(fig2)
                 bbox = fig2.get_tightbbox(renderer)
 
+                preserve_composite_aspect = False
                 if force_aspect is not None:
                     force_aspect = float(force_aspect)
+                elif export_full_figure:
+                    force_aspect = bbox.height / bbox.width
+                    preserve_composite_aspect = True
                 else:
                     fig_aspect = fig2.axes[0].get_aspect()
                     if fig_aspect in {"equal", 1.0}:
@@ -458,12 +477,23 @@ def save_fig(
                         )
 
                 for _ in range(10):
-                    wscale = width / bbox.width
-                    hscale = height / bbox.height
-                    if abs(wscale - 1.0) < 0.005 and abs(hscale - 1.0) < 0.005:
-                        break
-                    current_w, current_h = fig2.get_size_inches()
-                    fig2.set_size_inches(current_w * wscale, current_h * hscale, forward=True)
+                    if preserve_composite_aspect:
+                        scale = min(width / bbox.width, height / bbox.height)
+                        if abs(scale - 1.0) < 0.005:
+                            break
+                        current_w, current_h = fig2.get_size_inches()
+                        fig2.set_size_inches(current_w * scale, current_h * scale, forward=True)
+                    else:
+                        wscale = width / bbox.width
+                        hscale = height / bbox.height
+                        if abs(wscale - 1.0) < 0.005 and abs(hscale - 1.0) < 0.005:
+                            break
+                        current_w, current_h = fig2.get_size_inches()
+                        fig2.set_size_inches(
+                            current_w * wscale,
+                            current_h * hscale,
+                            forward=True,
+                        )
                     fig2.canvas.draw()
                     bbox = fig2.get_tightbbox(renderer)
 

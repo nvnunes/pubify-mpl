@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- Changed `save_fig(fig, ...)` to export the full composed Matplotlib figure, while `save_fig(ax, ...)` continues to export only the selected axes panel.
+- Added support for exporting subplot compositions, including shared colorbars, as a single saved artifact for placement with simple LaTeX layouts such as `"one"` and `"onewide"`.
+- Made full-figure export preserve the composed Matplotlib aspect by default and apply cleanup options across the whole exported figure.
+
 ## 1.0.4
 
 - Added `skip_clone` to `save_fig(...)`.

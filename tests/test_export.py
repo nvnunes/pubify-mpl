@@ -3,9 +3,12 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import pytest
 
 from pubify_mpl import pubify_rc_context, save_fig, use_template, write_tex_template
+from pubify_mpl.layout import normalized_template
+import pubify_mpl.export as export_mod
 from pubify_mpl.export import ResolvedStyle
 from pubify_mpl.rc import resolved_pubify_rc
 from pubify_mpl.adjust import (
@@ -33,6 +36,30 @@ AO4ELT_TEMPLATE = {
 }
 
 
+def make_composite_figure(*, with_shared_colorbar: bool = True):
+    fig, axs = plt.subplots(1, 2, figsize=(6, 3))
+    images = []
+    for idx, ax in enumerate(axs):
+        image = ax.imshow(
+            [[idx + 1, idx + 2], [idx + 3, idx + 4]],
+            origin="lower",
+        )
+        images.append(image)
+        ax.set_xlabel(f"X {idx}")
+        ax.set_ylabel(f"Y {idx}")
+        ax.set_title(f"Panel {idx}")
+        ax.text(0.5, 0.5, f"Note {idx}", transform=ax.transAxes)
+        ax.grid(True)
+
+    if with_shared_colorbar:
+        cbar = fig.colorbar(images[-1], ax=axs, shrink=0.85)
+        cbar.set_label("Scale")
+        fig.subplots_adjust(wspace=0.3, right=0.88, top=0.82)
+    else:
+        fig.subplots_adjust(wspace=0.3, top=0.82)
+
+    fig.suptitle("Composite Figure")
+    return fig, axs
 def test_save_basic_line_plot(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1, 2], [0, 1, 0])
@@ -62,6 +89,62 @@ def test_save_accepts_force_width_with_layout(tmp_path):
     )
     assert output is None
     assert (tmp_path / "force-width-demo.pdf").exists()
+    plt.close(fig)
+
+
+def test_save_figure_preserves_subplots_and_shared_colorbar(tmp_path):
+    fig, axs = make_composite_figure()
+    observed = {}
+
+    def prepare_export(fig_copy):
+        observed["same_object"] = fig_copy is fig
+        observed["axes_count"] = len(fig_copy.axes)
+        observed["titles"] = [ax.get_title() for ax in fig_copy.axes if ax.get_title()]
+        observed["suptitle"] = fig_copy._suptitle.get_text() if fig_copy._suptitle else None
+        observed["has_scale_label"] = any(ax.get_ylabel() == "Scale" for ax in fig_copy.axes)
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "composite-shared-cbar.pdf",
+        template=ARTICLE_TEMPLATE,
+        keep_titles=True,
+        prepare_export=prepare_export,
+        skip_rasterize=True,
+    )
+
+    assert observed["same_object"] is False
+    assert observed["axes_count"] == 3
+    assert observed["titles"] == ["Panel 0", "Panel 1"]
+    assert observed["suptitle"] == "Composite Figure"
+    assert observed["has_scale_label"] is True
+    assert (tmp_path / "composite-shared-cbar.pdf").exists()
+    plt.close(fig)
+
+
+def test_save_axes_still_isolates_single_panel_from_composite_figure(tmp_path):
+    fig, axs = make_composite_figure()
+    observed = {}
+
+    def prepare_export(fig_copy):
+        observed["axes_count"] = len(fig_copy.axes)
+        observed["titles"] = [ax.get_title() for ax in fig_copy.axes if ax.get_title()]
+        observed["has_scale_label"] = any(ax.get_ylabel() == "Scale" for ax in fig_copy.axes)
+
+    save_fig(
+        axs[1],
+        "onewide",
+        tmp_path / "isolated-panel.pdf",
+        template=ARTICLE_TEMPLATE,
+        keep_titles=True,
+        prepare_export=prepare_export,
+        skip_rasterize=True,
+    )
+
+    assert observed["axes_count"] == 2
+    assert observed["titles"] == ["Panel 1"]
+    assert observed["has_scale_label"] is True
+    assert (tmp_path / "isolated-panel.pdf").exists()
     plt.close(fig)
 
 
@@ -362,6 +445,162 @@ def test_prepare_export_can_receive_resolved_style(tmp_path):
     assert observed["tick_size"] == observed["style"].tick_labelsize_pt
     assert observed["legend_size"] == observed["style"].legend_fontsize_pt
     assert observed["title_size"] == observed["style"].title_fontsize_pt
+    plt.close(fig)
+
+
+def test_save_figure_cleanup_flags_apply_across_all_axes(tmp_path):
+    fig, axs = make_composite_figure(with_shared_colorbar=False)
+    observed = {}
+
+    def prepare_export(fig_copy):
+        observed["xlabels"] = [ax.get_xlabel() for ax in fig_copy.axes]
+        observed["ylabels"] = [ax.get_ylabel() for ax in fig_copy.axes]
+        observed["texts"] = [len(ax.texts) for ax in fig_copy.axes]
+        observed["xticks"] = [list(ax.get_xticks()) for ax in fig_copy.axes]
+        observed["yticks"] = [list(ax.get_yticks()) for ax in fig_copy.axes]
+        observed["grid_visible"] = [
+            any(line.get_visible() for line in ax.get_xgridlines() + ax.get_ygridlines())
+            for ax in fig_copy.axes
+        ]
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "composite-cleanup.pdf",
+        template=ARTICLE_TEMPLATE,
+        hide_labels=True,
+        hide_annotations=True,
+        hide_ticks=True,
+        hide_grid=True,
+        keep_titles=True,
+        prepare_export=prepare_export,
+        skip_rasterize=True,
+    )
+
+    assert observed["xlabels"] == ["", ""]
+    assert observed["ylabels"] == ["", ""]
+    assert observed["texts"] == [0, 0]
+    assert observed["xticks"] == [[], []]
+    assert observed["yticks"] == [[], []]
+    assert observed["grid_visible"] == [False, False]
+    plt.close(fig)
+
+
+def test_save_figure_hide_cbar_removes_all_colorbars(tmp_path):
+    fig, axs = make_composite_figure()
+    observed = {}
+
+    def prepare_export(fig_copy):
+        observed["axes_count"] = len(fig_copy.axes)
+        observed["has_scale_label"] = any(ax.get_ylabel() == "Scale" for ax in fig_copy.axes)
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "composite-hide-cbar.pdf",
+        template=ARTICLE_TEMPLATE,
+        hide_cbar=True,
+        keep_titles=True,
+        prepare_export=prepare_export,
+        skip_rasterize=True,
+    )
+
+    assert observed["axes_count"] == 2
+    assert observed["has_scale_label"] is False
+    plt.close(fig)
+
+
+def test_save_figure_keep_titles_false_clears_axes_titles_and_suptitle(tmp_path):
+    fig, axs = make_composite_figure(with_shared_colorbar=False)
+    observed = {}
+
+    def prepare_export(fig_copy):
+        observed["titles"] = [ax.get_title() for ax in fig_copy.axes]
+        observed["suptitle"] = fig_copy._suptitle.get_text() if fig_copy._suptitle else None
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "composite-clear-titles.pdf",
+        template=ARTICLE_TEMPLATE,
+        prepare_export=prepare_export,
+        skip_rasterize=True,
+    )
+
+    assert observed["titles"] == ["", ""]
+    assert observed["suptitle"] == ""
+    plt.close(fig)
+
+
+def test_save_figure_keep_titles_true_preserves_axes_titles_and_suptitle(tmp_path):
+    fig, axs = make_composite_figure(with_shared_colorbar=False)
+    observed = {}
+
+    def prepare_export(fig_copy):
+        observed["titles"] = [ax.get_title() for ax in fig_copy.axes]
+        observed["suptitle"] = fig_copy._suptitle.get_text() if fig_copy._suptitle else None
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "composite-keep-titles.pdf",
+        template=ARTICLE_TEMPLATE,
+        keep_titles=True,
+        prepare_export=prepare_export,
+        skip_rasterize=True,
+    )
+
+    assert observed["titles"] == ["Panel 0", "Panel 1"]
+    assert observed["suptitle"] == "Composite Figure"
+    plt.close(fig)
+
+
+def test_save_figure_uses_uniform_scaling_for_default_composite_aspect(tmp_path, monkeypatch):
+    fig, axs = plt.subplots(2, 1, figsize=(3, 6))
+    for idx, ax in enumerate(axs):
+        ax.plot([0, 1], [idx, idx + 1])
+        ax.set_title(f"Panel {idx}")
+    fig.suptitle("Tall Composite")
+
+    recorded_scales = []
+
+    def fake_layout_geometry(*args, **kwargs):
+        return {
+            "layout": "onewide",
+            "cols": 1,
+            "rows": 1,
+            "width_in": 4.0,
+            "height_in": 1.0,
+            "height_mode": "single_row",
+            "has_subcaption": False,
+            "layout_spec": normalized_template(ARTICLE_TEMPLATE),
+        }
+
+    original_set_size_inches = Figure.set_size_inches
+
+    def record_set_size_inches(self, w, h=None, *args, **kwargs):
+        current_w, current_h = self.get_size_inches()
+        if h is None:
+            new_w, new_h = w
+        else:
+            new_w, new_h = w, h
+        recorded_scales.append((new_w / current_w, new_h / current_h))
+        return original_set_size_inches(self, w, h, *args, **kwargs)
+
+    monkeypatch.setattr(export_mod, "latex_layout_geometry", fake_layout_geometry)
+    monkeypatch.setattr(Figure, "set_size_inches", record_set_size_inches)
+
+    save_fig(
+        fig,
+        "onewide",
+        tmp_path / "composite-aspect.pdf",
+        template=ARTICLE_TEMPLATE,
+        keep_titles=True,
+        skip_rasterize=True,
+    )
+
+    assert recorded_scales
+    assert all(x_scale == pytest.approx(y_scale, rel=1e-6) for x_scale, y_scale in recorded_scales)
     plt.close(fig)
 
 
