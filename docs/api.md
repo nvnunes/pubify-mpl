@@ -68,6 +68,12 @@ This page is generated from the public Python docstrings.
     options:
       show_source: false
 
+## remove_outside_padding
+
+::: pubify_mpl.adjust.remove_outside_padding
+    options:
+      show_source: false
+
 ## force_font_family
 
 ::: pubify_mpl.adjust.force_font_family

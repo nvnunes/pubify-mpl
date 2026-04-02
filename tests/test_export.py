@@ -4,6 +4,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
+from matplotlib.transforms import Bbox
 import pytest
 
 from pubify_mpl import pubify_rc_context, save_fig, use_template, write_tex_template
@@ -14,6 +15,7 @@ from pubify_mpl.rc import resolved_pubify_rc
 from pubify_mpl.adjust import (
     force_font_family,
     hide_labels as public_hide_labels,
+    remove_outside_padding,
     set_axes_labelsize,
     set_legend_fontsize,
     set_line_width,
@@ -62,6 +64,21 @@ def make_composite_figure(*, with_shared_colorbar: bool = True):
     fig.supxlabel("Shared X")
     fig.supylabel("Shared Y")
     return fig, axs
+
+
+def content_bbox_in_figure_coords(fig: Figure) -> Bbox:
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    boxes = [ax.get_position().frozen() for ax in fig.axes if ax.get_visible()]
+    for text in (getattr(fig, "_suptitle", None), getattr(fig, "_supxlabel", None), getattr(fig, "_supylabel", None)):
+        if text is not None and text.get_visible():
+            boxes.append(fig.transFigure.inverted().transform_bbox(text.get_window_extent(renderer)).frozen())
+    return Bbox.from_extents(
+        min(box.x0 for box in boxes),
+        min(box.y0 for box in boxes),
+        max(box.x1 for box in boxes),
+        max(box.y1 for box in boxes),
+    )
 def test_save_basic_line_plot(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1, 2], [0, 1, 0])
@@ -611,6 +628,22 @@ def test_save_figure_uses_uniform_scaling_for_default_composite_aspect(tmp_path,
 
     assert recorded_scales
     assert all(x_scale == pytest.approx(y_scale, rel=1e-6) for x_scale, y_scale in recorded_scales)
+    plt.close(fig)
+
+
+def test_remove_outside_padding_improves_composite_figure_outer_margins():
+    fig, axs = make_composite_figure(with_shared_colorbar=False)
+    fig.subplots_adjust(left=0.20, right=0.78, bottom=0.22, top=0.78, wspace=0.35)
+    content_before = content_bbox_in_figure_coords(fig)
+
+    remove_outside_padding(fig)
+
+    content_after = content_bbox_in_figure_coords(fig)
+
+    assert content_after.x0 < content_before.x0
+    assert content_after.x1 > content_before.x1
+    assert content_after.y0 < content_before.y0
+    assert content_after.y1 > content_before.y1
     plt.close(fig)
 
 

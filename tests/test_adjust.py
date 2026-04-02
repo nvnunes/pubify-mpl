@@ -2,6 +2,8 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.transforms import Bbox
+import pytest
 
 from pubify_mpl.adjust import (
     force_font_family,
@@ -11,6 +13,7 @@ from pubify_mpl.adjust import (
     hide_labels,
     hide_tick_labels,
     hide_ticks,
+    remove_outside_padding,
     set_axes_labelsize,
     set_legend_fontsize,
     set_line_width,
@@ -221,4 +224,78 @@ def test_adjustments_compose_without_conflict():
     assert all(label.get_text() == "" for label in ax.get_yticklabels())
     assert all(not line.get_visible() for line in ax.get_xgridlines() + ax.get_ygridlines())
     assert not ax.texts
+    plt.close(fig)
+
+
+def _content_bbox_in_figure_coords(fig):
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    boxes = [ax.get_position().frozen() for ax in fig.axes if ax.get_visible()]
+    for text in (getattr(fig, "_suptitle", None), getattr(fig, "_supxlabel", None), getattr(fig, "_supylabel", None)):
+        if text is not None and text.get_visible():
+            boxes.append(fig.transFigure.inverted().transform_bbox(text.get_window_extent(renderer)).frozen())
+    return Bbox.from_extents(
+        min(box.x0 for box in boxes),
+        min(box.y0 for box in boxes),
+        max(box.x1 for box in boxes),
+        max(box.y1 for box in boxes),
+    )
+
+
+def test_remove_outside_padding_tightens_outer_axes_margins_but_preserves_internal_gap():
+    fig, axs = plt.subplots(1, 2, figsize=(6, 3))
+    fig.subplots_adjust(left=0.25, right=0.70, bottom=0.28, top=0.72, wspace=0.45)
+    left_before = axs[0].get_position().frozen()
+    right_before = axs[1].get_position().frozen()
+    outer_left_before = left_before.x0
+    outer_right_before = 1.0 - right_before.x1
+    outer_bottom_before = left_before.y0
+    outer_top_before = 1.0 - left_before.y1
+    gap_ratio_before = (right_before.x0 - left_before.x1) / left_before.width
+
+    remove_outside_padding(fig)
+
+    left_after = axs[0].get_position().frozen()
+    right_after = axs[1].get_position().frozen()
+    gap_ratio_after = (right_after.x0 - left_after.x1) / left_after.width
+
+    assert left_after.x0 < outer_left_before
+    assert 1.0 - right_after.x1 < outer_right_before
+    assert left_after.y0 < outer_bottom_before
+    assert 1.0 - left_after.y1 < outer_top_before
+    assert gap_ratio_after == pytest.approx(gap_ratio_before)
+    plt.close(fig)
+
+
+def test_remove_outside_padding_scales_manual_colorbar_axes_and_shared_labels():
+    fig, axs = plt.subplots(1, 2, figsize=(6, 3))
+    fig.subplots_adjust(left=0.22, right=0.62, bottom=0.24, top=0.70, wspace=0.35)
+    cax = fig.add_axes([0.72, 0.24, 0.04, 0.46])
+    fig.supxlabel("Shared X")
+    fig.supylabel("Shared Y")
+
+    content_before = _content_bbox_in_figure_coords(fig)
+    left_before = axs[0].get_position().frozen()
+    cax_before = cax.get_position().frozen()
+    supxlabel_y_before = fig._supxlabel.get_position()[1]
+    supylabel_x_before = fig._supylabel.get_position()[0]
+    cax_gap_ratio_before = (cax_before.x0 - axs[1].get_position().x1) / left_before.width
+
+    remove_outside_padding(fig)
+
+    content_after = _content_bbox_in_figure_coords(fig)
+    left_after = axs[0].get_position().frozen()
+    cax_after = cax.get_position().frozen()
+    cax_gap_ratio_after = (cax_after.x0 - axs[1].get_position().x1) / left_after.width
+
+    assert content_after.x0 < content_before.x0
+    assert content_after.y0 < content_before.y0
+    assert content_after.x1 > content_before.x1
+    assert content_after.y1 > content_before.y1
+    assert cax_after.x1 > cax_before.x1
+    assert cax_gap_ratio_after == pytest.approx(cax_gap_ratio_before)
+    assert fig._supxlabel.get_position()[1] < supxlabel_y_before
+    assert fig._supylabel.get_position()[0] < supylabel_x_before
+    assert fig._supxlabel.get_text() == "Shared X"
+    assert fig._supylabel.get_text() == "Shared Y"
     plt.close(fig)

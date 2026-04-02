@@ -4,6 +4,7 @@ from collections.abc import Iterable
 
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from matplotlib.transforms import Bbox
 
 from .rc import PUBIFY_FONT_FAMILY
 
@@ -13,6 +14,31 @@ def _iter_figure_shared_labels(fig: Figure) -> Iterable:
         label = getattr(fig, attr, None)
         if label is not None:
             yield label
+
+
+def _iter_movable_figure_text(fig: Figure) -> Iterable:
+    seen: set[int] = set()
+    for text in [getattr(fig, "_suptitle", None), *list(_iter_figure_shared_labels(fig)), *fig.texts]:
+        if text is None or not text.get_visible():
+            continue
+        if id(text) in seen:
+            continue
+        if text.get_transform() is not fig.transFigure:
+            continue
+        seen.add(id(text))
+        yield text
+
+
+def _union_bboxes(bboxes: Iterable[Bbox]) -> Bbox | None:
+    filtered = [bbox for bbox in bboxes if bbox.width > 0 and bbox.height > 0]
+    if not filtered:
+        return None
+    return Bbox.from_extents(
+        min(bbox.x0 for bbox in filtered),
+        min(bbox.y0 for bbox in filtered),
+        max(bbox.x1 for bbox in filtered),
+        max(bbox.y1 for bbox in filtered),
+    )
 
 
 def iter_axes(root: Figure | Axes) -> Iterable[Axes]:
@@ -147,6 +173,59 @@ def hide_cbar(target: Figure | Axes, axes: Axes | Iterable[Axes] | None = None) 
 
     for cbar_ax in dict.fromkeys(cbar_axes):
         fig.delaxes(cbar_ax)
+
+
+def remove_outside_padding(fig: Figure, pad: float = 0.0) -> None:
+    """Best-effort removal of outer figure padding while preserving internal spacing.
+
+    This rescales and translates the full figure composition so the outer margin
+    is reduced without recomputing the relative spacing among internal axes.
+    It works best for composite figures built from multiple axes, manually added
+    colorbar axes, and figure-level labels placed in figure coordinates.
+
+    Args:
+        fig: Figure whose outer padding should be reduced.
+        pad: Optional figure-coordinate padding to leave on each outer edge.
+    """
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    pad = float(pad)
+    if pad < 0.0 or pad >= 0.5:
+        raise ValueError("pad must be in the range [0.0, 0.5).")
+
+    content_boxes = [ax.get_position(original=False).frozen() for ax in fig.axes if ax.get_visible()]
+    content_boxes.extend(
+        fig.transFigure.inverted().transform_bbox(text.get_window_extent(renderer)).frozen()
+        for text in _iter_movable_figure_text(fig)
+    )
+    content_bbox = _union_bboxes(content_boxes)
+    if content_bbox is None:
+        return
+    if content_bbox.width <= 0 or content_bbox.height <= 0:
+        return
+
+    target_bbox = Bbox.from_extents(pad, pad, 1.0 - pad, 1.0 - pad)
+    sx = target_bbox.width / content_bbox.width
+    sy = target_bbox.height / content_bbox.height
+    tx = target_bbox.x0 - content_bbox.x0 * sx
+    ty = target_bbox.y0 - content_bbox.y0 * sy
+
+    for ax in fig.axes:
+        if not ax.get_visible():
+            continue
+        pos = ax.get_position(original=False)
+        ax.set_position(
+            [
+                tx + pos.x0 * sx,
+                ty + pos.y0 * sy,
+                pos.width * sx,
+                pos.height * sy,
+            ]
+        )
+
+    for text in _iter_movable_figure_text(fig):
+        x, y = text.get_position()
+        text.set_position((tx + x * sx, ty + y * sy))
 
 
 def set_line_width(fig: Figure | Axes, line_width: float) -> None:
