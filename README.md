@@ -262,6 +262,7 @@ Some `save_fig()` options control how the exported figure fits into the LaTeX la
 - `caption_lines=...`: estimate how many lines the main caption will use
 - `subcaption_lines=...`: estimate how many lines each subcaption will use
 - `force_width=...`: force a smaller export width, as long as it still fits inside the selected layout
+- `force_width="full"`: for `"onewide"`, `"twowide"`, and `"threewide"`, use the full layout width and bypass the normal single-row height cap
 - `force_aspect=...`: force a specific aspect ratio for the exported copy
 
 Other options let you simplify the exported figure content without changing the original figure in Python:

@@ -111,6 +111,22 @@ def test_save_accepts_force_width_with_layout(tmp_path):
     plt.close(fig)
 
 
+def test_save_accepts_force_width_full_for_wide_layout(tmp_path):
+    fig, ax = plt.subplots(figsize=(4, 3))
+    ax.plot([0, 1], [0, 1])
+    output = save_fig(
+        fig,
+        "twowide",
+        tmp_path / "force-width-full-demo.pdf",
+        template=ARTICLE_TEMPLATE,
+        force_width="full",
+        skip_rasterize=True,
+    )
+    assert output is None
+    assert (tmp_path / "force-width-full-demo.pdf").exists()
+    plt.close(fig)
+
+
 def test_save_figure_preserves_subplots_and_shared_colorbar(tmp_path):
     fig, axs = make_composite_figure()
     observed = {}
@@ -214,6 +230,79 @@ def test_save_force_width_rejects_too_wide_request(tmp_path):
         assert "exceeds the available width" in str(exc)
     else:
         raise AssertionError("Expected ValueError")
+    plt.close(fig)
+
+
+def test_save_force_width_full_rejects_nonwide_layout(tmp_path):
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1])
+    with pytest.raises(ValueError, match="only supported for layouts"):
+        save_fig(
+            fig,
+            "two",
+            tmp_path / "full-width-invalid-layout.pdf",
+            template=ARTICLE_TEMPLATE,
+            force_width="full",
+            skip_rasterize=True,
+        )
+    plt.close(fig)
+
+
+def test_save_force_width_rejects_unknown_string_value(tmp_path):
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1])
+    with pytest.raises(ValueError, match="float in inches or the string 'full'"):
+        save_fig(
+            fig,
+            "onewide",
+            tmp_path / "bad-force-width.pdf",
+            template=ARTICLE_TEMPLATE,
+            force_width="wide",
+            skip_rasterize=True,
+        )
+    plt.close(fig)
+
+
+def test_save_force_width_full_bypasses_wide_layout_height_cap(tmp_path, monkeypatch):
+    fig, ax = plt.subplots(figsize=(4, 3))
+    ax.plot([0, 1], [0, 1])
+
+    original_layout_geometry = export_mod.latex_layout_geometry
+    layout_width = original_layout_geometry("onewide", ARTICLE_TEMPLATE)["width_in"]
+
+    def fake_layout_geometry(layout, layout_spec, caption_lines, subcaption_lines):
+        geometry = original_layout_geometry(
+            layout,
+            layout_spec,
+            caption_lines=caption_lines,
+            subcaption_lines=subcaption_lines,
+        )
+        geometry["height_in"] = 1.0
+        return geometry
+
+    monkeypatch.setattr(export_mod, "latex_layout_geometry", fake_layout_geometry)
+
+    with pytest.raises(ValueError, match="exceeds the available height"):
+        save_fig(
+            fig,
+            "onewide",
+            tmp_path / "full-width-height-capped.pdf",
+            template=ARTICLE_TEMPLATE,
+            force_width=layout_width,
+            skip_rasterize=True,
+        )
+
+    output = save_fig(
+        fig,
+        "onewide",
+        tmp_path / "full-width-height-bypassed.pdf",
+        template=ARTICLE_TEMPLATE,
+        force_width="full",
+        skip_rasterize=True,
+    )
+
+    assert output is None
+    assert (tmp_path / "full-width-height-bypassed.pdf").exists()
     plt.close(fig)
 
 

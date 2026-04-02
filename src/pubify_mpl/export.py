@@ -199,7 +199,7 @@ def save_fig(
     template: dict[str, Any] | None = None,
     caption_lines: int | None = None,
     subcaption_lines: int | None = None,
-    force_width: float | None = None,
+    force_width: float | str | None = None,
     force_aspect: float | None = None,
     dpi: int = 300,
     keep_titles: bool = False,
@@ -239,8 +239,11 @@ def save_fig(
             `use_template(...)` context.
         caption_lines: Estimated number of lines in the main caption. Defaults to `1`.
         subcaption_lines: Estimated number of lines in each subcaption. Defaults to `0`.
-        force_width: Optional width override in inches. Must still fit inside the
-            chosen layout budget.
+        force_width: Optional width override. Pass a float in inches to force a
+            narrower export that still fits inside the chosen layout budget, or
+            pass `"full"` for `"onewide"`, `"twowide"`, or `"threewide"` to
+            use the full layout width without applying the normal single-row
+            height cap.
         force_aspect: Optional aspect ratio override for the exported copy.
         dpi: Export DPI for the copied figure.
         keep_titles: Keep axis titles on the copied figure instead of clearing them.
@@ -443,6 +446,20 @@ def save_fig(
                 layout_width = layout_geometry["width_in"]
                 layout_height = layout_geometry["height_in"]
 
+                force_width_full = False
+                if isinstance(force_width, str):
+                    if force_width != "full":
+                        raise ValueError(
+                            "force_width must be a float in inches or the string "
+                            "'full'."
+                        )
+                    if layout not in {"onewide", "twowide", "threewide"}:
+                        raise ValueError(
+                            "force_width='full' is only supported for layouts "
+                            "'onewide', 'twowide', and 'threewide'."
+                        )
+                    force_width_full = True
+
                 if force_width is None:
                     if force_aspect == 1.0:
                         width = layout_width
@@ -460,8 +477,8 @@ def save_fig(
                         width = layout_width
                         height = layout_height
                 else:
-                    width = float(force_width)
-                    if width > layout_width + 1e-9:
+                    width = layout_width if force_width_full else float(force_width)
+                    if not force_width_full and width > layout_width + 1e-9:
                         raise ValueError(
                             f"force_width={width:.5f}in exceeds the available width "
                             f"for layout '{layout}' ({layout_width:.5f}in)."
@@ -469,7 +486,7 @@ def save_fig(
                     if force_aspect is None:
                         force_aspect = bbox.height / bbox.width
                     height = width if force_aspect == 1.0 else width * force_aspect
-                    if height > layout_height + 1e-9:
+                    if not force_width_full and height > layout_height + 1e-9:
                         raise ValueError(
                             f"force_width={width:.5f}in with force_aspect {force_aspect:.5f} "
                             f"produces height {height:.5f}in, which exceeds the "
