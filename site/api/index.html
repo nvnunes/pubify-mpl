@@ -1216,7 +1216,9 @@ accept either <code>prepare_export(fig_export)</code> or
 <p>This rescales and translates the full figure composition so the outer margin
 is reduced without recomputing the relative spacing among internal axes.
 It works best for composite figures built from multiple axes, manually added
-colorbar axes, and figure-level labels placed in figure coordinates.</p>
+colorbar axes, and figure-level labels placed in figure coordinates. If you
+also align companion axes with <code>match_axis_height(...)</code> or
+<code>match_axis_width(...)</code>, call those after <code>remove_outside_padding(...)</code>.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1281,7 +1283,8 @@ colorbar axes, and figure-level labels placed in figure coordinates.</p>
         <p>Match one axes span to another while preserving the orthogonal placement.</p>
 <p>This is useful for manually positioned companion axes such as shared
 colorbars that should match the height or width of a reference data axes
-after layout tweaks or export-time adjustments.</p>
+after layout tweaks or export-time adjustments. If you also call
+<code>remove_outside_padding(...)</code>, do that first and then rematch the span.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1361,6 +1364,8 @@ height, or <code>"x"</code> to match horizontal position and width.</p>
     <div class="doc doc-contents first">
 
         <p>Match a target axes height and vertical position to a reference axes.</p>
+<p>If you also call <code>remove_outside_padding(...)</code>, do that first and then call
+<code>match_axis_height(...)</code>.</p>
 
 
     </div>
@@ -1376,6 +1381,8 @@ height, or <code>"x"</code> to match horizontal position and width.</p>
     <div class="doc doc-contents first">
 
         <p>Match a target axes width and horizontal position to a reference axes.</p>
+<p>If you also call <code>remove_outside_padding(...)</code>, do that first and then call
+<code>match_axis_width(...)</code>.</p>
 
 
     </div>

@@ -181,7 +181,9 @@ def remove_outside_padding(fig: Figure, pad: float = 0.0) -> None:
     This rescales and translates the full figure composition so the outer margin
     is reduced without recomputing the relative spacing among internal axes.
     It works best for composite figures built from multiple axes, manually added
-    colorbar axes, and figure-level labels placed in figure coordinates.
+    colorbar axes, and figure-level labels placed in figure coordinates. If you
+    also align companion axes with `match_axis_height(...)` or
+    `match_axis_width(...)`, call those after `remove_outside_padding(...)`.
 
     Args:
         fig: Figure whose outer padding should be reduced.
@@ -233,7 +235,8 @@ def match_axis_span(target_ax: Axes, ref_ax: Axes, axis: str = "y") -> None:
 
     This is useful for manually positioned companion axes such as shared
     colorbars that should match the height or width of a reference data axes
-    after layout tweaks or export-time adjustments.
+    after layout tweaks or export-time adjustments. If you also call
+    `remove_outside_padding(...)`, do that first and then rematch the span.
 
     Args:
         target_ax: Axes whose span should be updated.
@@ -258,12 +261,20 @@ def match_axis_span(target_ax: Axes, ref_ax: Axes, axis: str = "y") -> None:
 
 
 def match_axis_height(target_ax: Axes, ref_ax: Axes) -> None:
-    """Match a target axes height and vertical position to a reference axes."""
+    """Match a target axes height and vertical position to a reference axes.
+
+    If you also call `remove_outside_padding(...)`, do that first and then call
+    `match_axis_height(...)`.
+    """
     match_axis_span(target_ax, ref_ax, axis="y")
 
 
 def match_axis_width(target_ax: Axes, ref_ax: Axes) -> None:
-    """Match a target axes width and horizontal position to a reference axes."""
+    """Match a target axes width and horizontal position to a reference axes.
+
+    If you also call `remove_outside_padding(...)`, do that first and then call
+    `match_axis_width(...)`.
+    """
     match_axis_span(target_ax, ref_ax, axis="x")
 
 

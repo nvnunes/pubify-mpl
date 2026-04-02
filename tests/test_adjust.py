@@ -346,3 +346,34 @@ def test_match_axis_span_rejects_unknown_axis():
         match_axis_span(target_ax, ax, axis="z")
 
     plt.close(fig)
+
+
+def test_match_axis_height_can_be_applied_after_remove_outside_padding_for_equal_aspect_axes():
+    fig, axs = plt.subplots(1, 2, figsize=(9.0, 4.6), sharey=True)
+    fig.subplots_adjust(left=0.05, right=0.96, bottom=0.09, top=0.98, wspace=0.10)
+
+    for ax in axs:
+        ax.imshow([[1, 2], [3, 4]], origin="lower")
+
+    fig.supylabel("Shared Y", x=0.0)
+    left_bbox = axs[0].get_position()
+    right_bbox = axs[1].get_position()
+    cax = fig.add_axes(
+        [
+            right_bbox.x1 + 0.015,
+            min(left_bbox.y0, right_bbox.y0) + 0.01,
+            0.02,
+            max(left_bbox.y1, right_bbox.y1) - min(left_bbox.y0, right_bbox.y0) - 0.02,
+        ]
+    )
+    fig.colorbar(axs[0].images[0], cax=cax, orientation="vertical")
+
+    remove_outside_padding(fig)
+    match_axis_height(cax, axs[1])
+    fig.canvas.draw()
+
+    ref_pos = axs[1].get_position().frozen()
+    cbar_pos = cax.get_position().frozen()
+    assert cbar_pos.y0 == pytest.approx(ref_pos.y0)
+    assert cbar_pos.height == pytest.approx(ref_pos.height)
+    plt.close(fig)
