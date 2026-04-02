@@ -127,6 +127,18 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-bs-level="2"><a href="#match_axis_span" class="nav-link">match_axis_span</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#match_axis_height" class="nav-link">match_axis_height</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#match_axis_width" class="nav-link">match_axis_width</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-bs-level="2"><a href="#force_font_family" class="nav-link">force_font_family</a>
               <ul class="nav flex-column">
               </ul>
@@ -1252,6 +1264,118 @@ colorbar axes, and figure-level labels placed in figure coordinates.</p>
           </tr>
       </tbody>
     </table>
+
+
+    </div>
+
+</div><h2 id="match_axis_span">match_axis_span</h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Match one axes span to another while preserving the orthogonal placement.</p>
+<p>This is useful for manually positioned companion axes such as shared
+colorbars that should match the height or width of a reference data axes
+after layout tweaks or export-time adjustments.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>target_ax</code>
+            </td>
+            <td>
+                  <code><span title="matplotlib.axes.Axes">Axes</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Axes whose span should be updated.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>ref_ax</code>
+            </td>
+            <td>
+                  <code><span title="matplotlib.axes.Axes">Axes</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Reference axes whose span should be matched.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>axis</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Which span to match. Use <code>"y"</code> to match vertical position and
+height, or <code>"x"</code> to match horizontal position and width.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;y&#39;</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    </div>
+
+</div><h2 id="match_axis_height">match_axis_height</h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Match a target axes height and vertical position to a reference axes.</p>
+
+
+    </div>
+
+</div><h2 id="match_axis_width">match_axis_width</h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Match a target axes width and horizontal position to a reference axes.</p>
 
 
     </div>

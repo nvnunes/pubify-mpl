@@ -13,6 +13,9 @@ from pubify_mpl.adjust import (
     hide_labels,
     hide_tick_labels,
     hide_ticks,
+    match_axis_height,
+    match_axis_span,
+    match_axis_width,
     remove_outside_padding,
     set_axes_labelsize,
     set_legend_fontsize,
@@ -298,4 +301,48 @@ def test_remove_outside_padding_scales_manual_colorbar_axes_and_shared_labels():
     assert fig._supylabel.get_position()[0] < supylabel_x_before
     assert fig._supxlabel.get_text() == "Shared X"
     assert fig._supylabel.get_text() == "Shared Y"
+    plt.close(fig)
+
+
+def test_match_axis_height_matches_vertical_span_only():
+    fig = plt.figure(figsize=(6, 3))
+    ref_ax = fig.add_axes([0.12, 0.22, 0.32, 0.48])
+    target_ax = fig.add_axes([0.76, 0.10, 0.04, 0.72])
+    target_before = target_ax.get_position().frozen()
+    ref_pos = ref_ax.get_position().frozen()
+
+    match_axis_height(target_ax, ref_ax)
+
+    target_after = target_ax.get_position().frozen()
+    assert target_after.x0 == pytest.approx(target_before.x0)
+    assert target_after.width == pytest.approx(target_before.width)
+    assert target_after.y0 == pytest.approx(ref_pos.y0)
+    assert target_after.height == pytest.approx(ref_pos.height)
+    plt.close(fig)
+
+
+def test_match_axis_width_matches_horizontal_span_only():
+    fig = plt.figure(figsize=(6, 3))
+    ref_ax = fig.add_axes([0.18, 0.20, 0.52, 0.18])
+    target_ax = fig.add_axes([0.05, 0.78, 0.90, 0.05])
+    target_before = target_ax.get_position().frozen()
+    ref_pos = ref_ax.get_position().frozen()
+
+    match_axis_width(target_ax, ref_ax)
+
+    target_after = target_ax.get_position().frozen()
+    assert target_after.y0 == pytest.approx(target_before.y0)
+    assert target_after.height == pytest.approx(target_before.height)
+    assert target_after.x0 == pytest.approx(ref_pos.x0)
+    assert target_after.width == pytest.approx(ref_pos.width)
+    plt.close(fig)
+
+
+def test_match_axis_span_rejects_unknown_axis():
+    fig, ax = plt.subplots()
+    target_ax = fig.add_axes([0.8, 0.1, 0.05, 0.8])
+
+    with pytest.raises(ValueError, match="axis must be 'x' or 'y'"):
+        match_axis_span(target_ax, ax, axis="z")
+
     plt.close(fig)

@@ -74,6 +74,24 @@ This page is generated from the public Python docstrings.
     options:
       show_source: false
 
+## match_axis_span
+
+::: pubify_mpl.adjust.match_axis_span
+    options:
+      show_source: false
+
+## match_axis_height
+
+::: pubify_mpl.adjust.match_axis_height
+    options:
+      show_source: false
+
+## match_axis_width
+
+::: pubify_mpl.adjust.match_axis_width
+    options:
+      show_source: false
+
 ## force_font_family
 
 ::: pubify_mpl.adjust.force_font_family

@@ -228,6 +228,45 @@ def remove_outside_padding(fig: Figure, pad: float = 0.0) -> None:
         text.set_position((tx + x * sx, ty + y * sy))
 
 
+def match_axis_span(target_ax: Axes, ref_ax: Axes, axis: str = "y") -> None:
+    """Match one axes span to another while preserving the orthogonal placement.
+
+    This is useful for manually positioned companion axes such as shared
+    colorbars that should match the height or width of a reference data axes
+    after layout tweaks or export-time adjustments.
+
+    Args:
+        target_ax: Axes whose span should be updated.
+        ref_ax: Reference axes whose span should be matched.
+        axis: Which span to match. Use `"y"` to match vertical position and
+            height, or `"x"` to match horizontal position and width.
+    """
+    ref_pos = ref_ax.get_position(original=False)
+    target_pos = target_ax.get_position(original=False)
+
+    if axis == "y":
+        target_ax.set_position(
+            [target_pos.x0, ref_pos.y0, target_pos.width, ref_pos.height]
+        )
+        return
+    if axis == "x":
+        target_ax.set_position(
+            [ref_pos.x0, target_pos.y0, ref_pos.width, target_pos.height]
+        )
+        return
+    raise ValueError("axis must be 'x' or 'y'.")
+
+
+def match_axis_height(target_ax: Axes, ref_ax: Axes) -> None:
+    """Match a target axes height and vertical position to a reference axes."""
+    match_axis_span(target_ax, ref_ax, axis="y")
+
+
+def match_axis_width(target_ax: Axes, ref_ax: Axes) -> None:
+    """Match a target axes width and horizontal position to a reference axes."""
+    match_axis_span(target_ax, ref_ax, axis="x")
+
+
 def set_line_width(fig: Figure | Axes, line_width: float) -> None:
     """Set line width on lines and compatible collections.
 
