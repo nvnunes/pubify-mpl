@@ -588,15 +588,31 @@ require an existing parent directory.</p>
                 <code>force_width</code>
             </td>
             <td>
-                  <code><span title="float">float</span> | <span title="str">str</span> | None</code>
+                  <code><span title="float">float</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Optional width override. Pass a float in inches to force a
-narrower export that still fits inside the chosen layout budget, or
-pass <code>"full"</code> for <code>"onewide"</code>, <code>"twowide"</code>, or <code>"threewide"</code> to
-use the full layout width without applying the normal single-row
-height cap.</p>
+                <p>Optional width override in inches. Supported for non-wide
+layouts only and must still fit inside the chosen layout budget.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>force_height</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional height cap in inches. The export is first sized
+normally for the chosen layout and then uniformly scaled down if it
+would otherwise exceed this height. On wide layouts, the default
+sizing uses the full layout width before this cap is applied.</p>
               </div>
             </td>
             <td>

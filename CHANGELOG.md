@@ -4,7 +4,8 @@
 
 - Changed `save_fig(fig, ...)` to export the full composed Matplotlib figure, while `save_fig(ax, ...)` continues to export only the selected axes panel.
 - Added support for exporting subplot compositions, including shared colorbars, as a single saved artifact for placement with simple LaTeX layouts such as `"one"` and `"onewide"`.
-- Made full-figure export preserve the composed Matplotlib aspect by default and apply cleanup options across the whole exported figure.
+- Changed wide layouts (`"onewide"`, `"twowide"`, `"threewide"`) to use full layout width by default.
+- Added `force_height=...` as the height cap control for exports.
 
 ## 1.0.4
 

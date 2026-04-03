@@ -99,7 +99,7 @@ def test_save_accepts_force_width_with_layout(tmp_path):
     ax.plot([0, 1], [0, 1])
     output = save_fig(
         fig,
-        "onewide",
+        "one",
         tmp_path / "force-width-demo.pdf",
         template=ARTICLE_TEMPLATE,
         caption_lines=0,
@@ -111,19 +111,45 @@ def test_save_accepts_force_width_with_layout(tmp_path):
     plt.close(fig)
 
 
-def test_save_accepts_force_width_full_for_wide_layout(tmp_path):
+def test_save_wide_layout_uses_full_width_without_height_cap(tmp_path, monkeypatch):
     fig, ax = plt.subplots(figsize=(4, 3))
     ax.plot([0, 1], [0, 1])
+    captured = {}
+
+    original_layout_geometry = export_mod.latex_layout_geometry
+    original_savefig = Figure.savefig
+
+    def fake_layout_geometry(layout, layout_spec, caption_lines, subcaption_lines):
+        geometry = original_layout_geometry(
+            layout,
+            layout_spec,
+            caption_lines=caption_lines,
+            subcaption_lines=subcaption_lines,
+        )
+        geometry["width_in"] = 4.5
+        geometry["height_in"] = 1.0
+        return geometry
+
+    def fake_savefig(self, *args, **kwargs):
+        renderer = export_mod._get_renderer(self)
+        bbox = self.get_tightbbox(renderer)
+        captured["width"] = bbox.width
+        captured["height"] = bbox.height
+
+    monkeypatch.setattr(export_mod, "latex_layout_geometry", fake_layout_geometry)
+    monkeypatch.setattr(Figure, "savefig", fake_savefig)
+
     output = save_fig(
         fig,
         "twowide",
         tmp_path / "force-width-full-demo.pdf",
         template=ARTICLE_TEMPLATE,
-        force_width="full",
         skip_rasterize=True,
     )
+
     assert output is None
-    assert (tmp_path / "force-width-full-demo.pdf").exists()
+    assert captured["width"] == pytest.approx(4.5, abs=0.05)
+    assert captured["height"] > 1.0
     plt.close(fig)
 
 
@@ -220,7 +246,7 @@ def test_save_force_width_rejects_too_wide_request(tmp_path):
     try:
         save_fig(
             fig,
-            "onewide",
+            "one",
             tmp_path / "too-wide.pdf",
             template=ARTICLE_TEMPLATE,
             force_width=10.0,
@@ -233,29 +259,29 @@ def test_save_force_width_rejects_too_wide_request(tmp_path):
     plt.close(fig)
 
 
-def test_save_force_width_full_rejects_nonwide_layout(tmp_path):
+def test_save_force_width_rejects_wide_layout(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
-    with pytest.raises(ValueError, match="only supported for layouts"):
+    with pytest.raises(ValueError, match="not supported for layouts"):
         save_fig(
             fig,
-            "two",
-            tmp_path / "full-width-invalid-layout.pdf",
+            "twowide",
+            tmp_path / "wide-force-width-invalid.pdf",
             template=ARTICLE_TEMPLATE,
-            force_width="full",
+            force_width=2.0,
             skip_rasterize=True,
         )
     plt.close(fig)
 
 
-def test_save_force_width_rejects_unknown_string_value(tmp_path):
+def test_save_force_width_rejects_string_value(tmp_path):
     fig, ax = plt.subplots()
     ax.plot([0, 1], [0, 1])
-    with pytest.raises(ValueError, match="float in inches or the string 'full'"):
+    with pytest.raises(ValueError, match="must be a float in inches"):
         save_fig(
             fig,
             "onewide",
-            tmp_path / "bad-force-width.pdf",
+            tmp_path / "string-force-width.pdf",
             template=ARTICLE_TEMPLATE,
             force_width="wide",
             skip_rasterize=True,
@@ -263,12 +289,27 @@ def test_save_force_width_rejects_unknown_string_value(tmp_path):
     plt.close(fig)
 
 
-def test_save_force_width_full_bypasses_wide_layout_height_cap(tmp_path, monkeypatch):
+def test_save_rejects_force_width_and_force_height_together(tmp_path):
     fig, ax = plt.subplots(figsize=(4, 3))
     ax.plot([0, 1], [0, 1])
+    with pytest.raises(ValueError, match="mutually exclusive"):
+        save_fig(
+            fig,
+            "one",
+            tmp_path / "width-and-height.pdf",
+            template=ARTICLE_TEMPLATE,
+            force_width=2.0,
+            force_height=2.0,
+            skip_rasterize=True,
+        )
+    plt.close(fig)
 
+
+def test_save_force_height_caps_wide_layout(tmp_path, monkeypatch):
+    fig, ax = plt.subplots(figsize=(4, 3))
+    ax.plot([0, 1], [0, 1])
+    captured = {}
     original_layout_geometry = export_mod.latex_layout_geometry
-    layout_width = original_layout_geometry("onewide", ARTICLE_TEMPLATE)["width_in"]
 
     def fake_layout_geometry(layout, layout_spec, caption_lines, subcaption_lines):
         geometry = original_layout_geometry(
@@ -277,32 +318,57 @@ def test_save_force_width_full_bypasses_wide_layout_height_cap(tmp_path, monkeyp
             caption_lines=caption_lines,
             subcaption_lines=subcaption_lines,
         )
+        geometry["width_in"] = 4.5
         geometry["height_in"] = 1.0
         return geometry
 
-    monkeypatch.setattr(export_mod, "latex_layout_geometry", fake_layout_geometry)
+    def fake_savefig(self, *args, **kwargs):
+        renderer = export_mod._get_renderer(self)
+        bbox = self.get_tightbbox(renderer)
+        captured["width"] = bbox.width
+        captured["height"] = bbox.height
 
-    with pytest.raises(ValueError, match="exceeds the available height"):
-        save_fig(
-            fig,
-            "onewide",
-            tmp_path / "full-width-height-capped.pdf",
-            template=ARTICLE_TEMPLATE,
-            force_width=layout_width,
-            skip_rasterize=True,
-        )
+    monkeypatch.setattr(export_mod, "latex_layout_geometry", fake_layout_geometry)
+    monkeypatch.setattr(Figure, "savefig", fake_savefig)
 
     output = save_fig(
         fig,
         "onewide",
-        tmp_path / "full-width-height-bypassed.pdf",
+        tmp_path / "force-height-wide.pdf",
         template=ARTICLE_TEMPLATE,
-        force_width="full",
+        force_height=2.0,
         skip_rasterize=True,
     )
 
     assert output is None
-    assert (tmp_path / "full-width-height-bypassed.pdf").exists()
+    assert captured["height"] <= 2.0 + 0.05
+    assert captured["width"] < 4.5
+    plt.close(fig)
+
+
+def test_save_force_height_caps_nonwide_layout(tmp_path, monkeypatch):
+    fig, ax = plt.subplots(figsize=(4, 3))
+    ax.plot([0, 1], [0, 1])
+    captured = {}
+
+    def fake_savefig(self, *args, **kwargs):
+        renderer = export_mod._get_renderer(self)
+        bbox = self.get_tightbbox(renderer)
+        captured["height"] = bbox.height
+
+    monkeypatch.setattr(Figure, "savefig", fake_savefig)
+
+    output = save_fig(
+        fig,
+        "one",
+        tmp_path / "force-height-one.pdf",
+        template=ARTICLE_TEMPLATE,
+        force_height=2.0,
+        skip_rasterize=True,
+    )
+
+    assert output is None
+    assert captured["height"] <= 2.0 + 0.05
     plt.close(fig)
 
 

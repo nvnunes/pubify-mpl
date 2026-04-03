@@ -31,11 +31,11 @@ _CURRENT_TEMPLATE: ContextVar[TemplateInput] = ContextVar(
 
 LAYOUTS = {
     "one": {"cols": 1, "rows": 1, "height_mode": "full_page"},
-    "onewide": {"cols": 1, "rows": 1, "height_mode": "single_row"},
+    "onewide": {"cols": 1, "rows": 1, "height_mode": "wide"},
     "two": {"cols": 1, "rows": 2, "height_mode": "stacked"},
-    "twowide": {"cols": 2, "rows": 1, "height_mode": "single_row"},
+    "twowide": {"cols": 2, "rows": 1, "height_mode": "wide"},
     "three": {"cols": 1, "rows": 3, "height_mode": "stacked"},
-    "threewide": {"cols": 3, "rows": 1, "height_mode": "single_row"},
+    "threewide": {"cols": 3, "rows": 1, "height_mode": "wide"},
     "four": {"cols": 2, "rows": 2, "height_mode": "stacked"},
     "six": {"cols": 2, "rows": 3, "height_mode": "stacked"},
     "sixwide": {"cols": 3, "rows": 2, "height_mode": "stacked"},
@@ -72,9 +72,6 @@ def normalized_template(template: TemplateInput = None) -> TemplateSpec:
 
     spec["caption_lineheight_in"] = spec["caption_lineheight_pt"] / _TEX_PT_PER_IN
     spec["subcaption_lineheight_in"] = spec["subcaption_lineheight_pt"] / _TEX_PT_PER_IN
-
-    if "single_row_layout_max_height_in" not in spec:
-        spec["single_row_layout_max_height_in"] = spec["textheight_in"] / 3.0
 
     if "post_caption_skip_in" not in spec:
         spec["post_caption_skip_in"] = 0.0
@@ -113,11 +110,6 @@ def layout_spec_rowgap_in(layout_spec: TemplateInput = None) -> float:
 def layout_spec_colgap_in(layout_spec: TemplateInput = None) -> float:
     spec = normalized_template(layout_spec)
     return spec["col_gap_in"]
-
-
-def layout_spec_single_row_height_in(layout_spec: TemplateInput = None) -> float:
-    spec = normalized_template(layout_spec)
-    return spec["single_row_layout_max_height_in"]
 
 
 def estimated_text_height_in(line_count: int | float = 0, lineheight_in: float = 0.0) -> float:
@@ -203,22 +195,12 @@ def latex_layout_geometry(
             caption_lines=caption_lines,
             subcaption_lines=subcaption_lines,
         )
-    elif height_mode == "single_row":
-        height = (
-            layout_spec_single_row_height_in(spec)
-            - spec["caption_allowance_in"]
-            - estimated_text_height_in(caption_lines, lineheight_in=spec["caption_lineheight_in"])
-            - spec["caption_skip_in"]
-            - spec["post_caption_skip_in"]
+    elif height_mode == "wide":
+        height = layout_spec_fullpage_height_in(
+            spec,
+            caption_lines=caption_lines,
+            subcaption_lines=subcaption_lines,
         )
-        if subcaption_lines > 0:
-            height -= (
-                spec["subcaption_allowance_in"]
-                + estimated_text_height_in(
-                    subcaption_lines, lineheight_in=spec["subcaption_lineheight_in"]
-                )
-                + spec["subcaption_skip_in"]
-            )
     elif height_mode == "stacked":
         height = (
             layout_spec_stacked_height_in(

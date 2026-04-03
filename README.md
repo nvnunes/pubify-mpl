@@ -110,11 +110,11 @@ If you do not already know your document dimensions and typography settings, fir
 See layout options in [gallery/layout-gallery.pdf](https://github.com/nvnunes/pubify-mpl/blob/main/gallery/layout-gallery.pdf) including:
 
 - `"one"`: one large panel
-- `"onewide"`: one short wide panel
+- `"onewide"`: one full-width panel
 - `"two"`: two stacked panels
-- `"twowide"`: two side-by-side panels
+- `"twowide"`: two side-by-side panels across the full text width
 - `"three"`: three stacked panels
-- `"threewide"`: three side-by-side panels
+- `"threewide"`: three side-by-side panels across the full text width
 - `"four"`: 2x2 grid
 - `"six"`: 2x3 grid
 - `"sixwide"`: 3x2 grid
@@ -246,7 +246,6 @@ Exported figures use the standard LaTeX serif face; the template controls typogr
 | `tick_length_pt` | tick length; `-1` leaves existing tick lengths unchanged | `3.0pt` |
 | `caption_allowance_in` | extra buffer added beyond the estimated main caption text height | `0.08in` |
 | `subcaption_allowance_in` | extra buffer added beyond the estimated subcaption text height | `0.08in` |
-| `single_row_layout_max_height_in` | maximum total layout height budget used for single-row layouts such as `"onewide"` or `"twowide"` | `textheight_in / 3` |
 | `subcaption_skip_in` | vertical space between a panel and its subcaption | `0.08in` |
 | `row_skip_in` | vertical space between rows in stacked layouts | `0.11in` |
 | `caption_skip_in` | vertical space between the figure body and the main caption | `0.11in` |
@@ -261,9 +260,11 @@ Some `save_fig()` options control how the exported figure fits into the LaTeX la
 
 - `caption_lines=...`: estimate how many lines the main caption will use
 - `subcaption_lines=...`: estimate how many lines each subcaption will use
-- `force_width=...`: force a smaller export width, as long as it still fits inside the selected layout
-- `force_width="full"`: for `"onewide"`, `"twowide"`, and `"threewide"`, use the full layout width and bypass the normal single-row height cap
+- `force_width=...`: force a smaller export width for non-wide layouts, as long as it still fits inside the selected layout
+- `force_height=...`: cap the export height after the normal layout fit; on wide layouts this is the main size-control knob
 - `force_aspect=...`: force a specific aspect ratio for the exported copy
+
+`force_width` and `force_height` are mutually exclusive. Wide layouts (`"onewide"`, `"twowide"`, `"threewide"`) use the full layout width by default and do not accept `force_width`.
 
 Other options let you simplify the exported figure content without changing the original figure in Python:
 

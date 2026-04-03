@@ -27,7 +27,6 @@ def test_partial_template_gets_policy_defaults():
     assert spec["subcaption_lineheight_pt"] == 13.6
     assert spec["caption_lineheight_in"] == 13.6 / 72.27
     assert spec["subcaption_lineheight_in"] == 13.6 / 72.27
-    assert spec["single_row_layout_max_height_in"] == 3.0
     assert spec["col_gap_in"] == 7.0 * 0.02
     assert spec["caption_allowance_in"] == 0.08
     assert spec["subcaption_allowance_in"] == 0.08
@@ -100,7 +99,7 @@ def test_layout_geometry_samples():
         assert geom["height_in"] > 0
 
 
-def test_subcaption_skip_and_caption_skip_affect_single_row_height():
+def test_subcaption_skip_and_caption_skip_affect_wide_layout_height_geometry():
     base = {
         "textwidth_in": 6.5,
         "textheight_in": 8.5,

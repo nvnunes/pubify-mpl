@@ -199,7 +199,8 @@ def save_fig(
     template: dict[str, Any] | None = None,
     caption_lines: int | None = None,
     subcaption_lines: int | None = None,
-    force_width: float | str | None = None,
+    force_width: float | None = None,
+    force_height: float | None = None,
     force_aspect: float | None = None,
     dpi: int = 300,
     keep_titles: bool = False,
@@ -239,11 +240,12 @@ def save_fig(
             `use_template(...)` context.
         caption_lines: Estimated number of lines in the main caption. Defaults to `1`.
         subcaption_lines: Estimated number of lines in each subcaption. Defaults to `0`.
-        force_width: Optional width override. Pass a float in inches to force a
-            narrower export that still fits inside the chosen layout budget, or
-            pass `"full"` for `"onewide"`, `"twowide"`, or `"threewide"` to
-            use the full layout width without applying the normal single-row
-            height cap.
+        force_width: Optional width override in inches. Supported for non-wide
+            layouts only and must still fit inside the chosen layout budget.
+        force_height: Optional height cap in inches. The export is first sized
+            normally for the chosen layout and then uniformly scaled down if it
+            would otherwise exceed this height. On wide layouts, the default
+            sizing uses the full layout width before this cap is applied.
         force_aspect: Optional aspect ratio override for the exported copy.
         dpi: Export DPI for the copied figure.
         keep_titles: Keep axis titles on the copied figure instead of clearing them.
@@ -293,6 +295,15 @@ def save_fig(
     subcaption_lines = int(subcaption_lines)
     if subcaption_lines < 0:
         raise ValueError("subcaption_lines must be non-negative.")
+
+    if force_width is not None and force_height is not None:
+        raise ValueError("force_width and force_height are mutually exclusive.")
+    if isinstance(force_width, str):
+        raise ValueError("force_width must be a float in inches.")
+    if force_height is not None:
+        force_height = float(force_height)
+        if force_height <= 0.0:
+            raise ValueError("force_height must be positive.")
 
     export_full_figure = False
     if isinstance(fig_or_ax, mpl.axes.Axes):
@@ -434,7 +445,7 @@ def save_fig(
                 if not isinstance(layout, str):
                     raise TypeError(
                         "layout must be a named layout string. "
-                        "Use force_width=... to constrain the exported width."
+                        "Use force_width=... or force_height=... to constrain the export."
                     )
 
                 layout_geometry = latex_layout_geometry(
@@ -445,22 +456,20 @@ def save_fig(
                 )
                 layout_width = layout_geometry["width_in"]
                 layout_height = layout_geometry["height_in"]
+                wide_layout = layout in {"onewide", "twowide", "threewide"}
 
-                force_width_full = False
-                if isinstance(force_width, str):
-                    if force_width != "full":
+                if wide_layout:
+                    if force_width is not None:
                         raise ValueError(
-                            "force_width must be a float in inches or the string "
-                            "'full'."
+                            "force_width is not supported for layouts "
+                            "'onewide', 'twowide', and 'threewide'. "
+                            "Wide layouts always use the full layout width."
                         )
-                    if layout not in {"onewide", "twowide", "threewide"}:
-                        raise ValueError(
-                            "force_width='full' is only supported for layouts "
-                            "'onewide', 'twowide', and 'threewide'."
-                        )
-                    force_width_full = True
-
-                if force_width is None:
+                    width = layout_width
+                    if force_aspect is None:
+                        force_aspect = bbox.height / bbox.width
+                    height = width if force_aspect == 1.0 else width * force_aspect
+                elif force_width is None:
                     if force_aspect == 1.0:
                         width = layout_width
                         height = layout_height
@@ -477,8 +486,8 @@ def save_fig(
                         width = layout_width
                         height = layout_height
                 else:
-                    width = layout_width if force_width_full else float(force_width)
-                    if not force_width_full and width > layout_width + 1e-9:
+                    width = float(force_width)
+                    if width > layout_width + 1e-9:
                         raise ValueError(
                             f"force_width={width:.5f}in exceeds the available width "
                             f"for layout '{layout}' ({layout_width:.5f}in)."
@@ -486,13 +495,18 @@ def save_fig(
                     if force_aspect is None:
                         force_aspect = bbox.height / bbox.width
                     height = width if force_aspect == 1.0 else width * force_aspect
-                    if not force_width_full and height > layout_height + 1e-9:
+                    if height > layout_height + 1e-9:
                         raise ValueError(
                             f"force_width={width:.5f}in with force_aspect {force_aspect:.5f} "
                             f"produces height {height:.5f}in, which exceeds the "
                             f"available height for layout '{layout}' "
                             f"({layout_height:.5f}in)."
                         )
+
+                if force_height is not None and height > force_height + 1e-9:
+                    scale = force_height / height
+                    width *= scale
+                    height *= scale
 
                 for _ in range(10):
                     if preserve_composite_aspect:
