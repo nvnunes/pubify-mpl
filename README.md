@@ -11,6 +11,16 @@ This package is meant for researchers who already use Matplotlib and LaTeX and w
 
 See [CHANGELOG.md](https://github.com/nvnunes/pubify-mpl/blob/main/CHANGELOG.md) for release history and user-visible changes, and [CONTRIBUTING.md](https://github.com/nvnunes/pubify-mpl/blob/main/CONTRIBUTING.md) for contributor and release workflow guidance.
 
+## Documentation
+
+- [Docs home](https://nvnunes.github.io/pubify-mpl/)
+- [Architecture and package boundaries](https://nvnunes.github.io/pubify-mpl/architecture/)
+- [Development workflow](https://nvnunes.github.io/pubify-mpl/development/)
+- [Testing and verification](https://nvnunes.github.io/pubify-mpl/testing/)
+- [API reference](https://nvnunes.github.io/pubify-mpl/api/)
+
+`README.md` remains the public quick-start and usage guide. Durable repo-local owners for package structure, contributor workflow, and verification expectations live in the docs above.
+
 ## Requirements
 
 - Python 3.10+

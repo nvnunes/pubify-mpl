@@ -2,10 +2,14 @@
 
 This document is for human contributors working on `pubify-mpl`.
 
-For package usage, examples, and API behavior, see `README.md`.
-For release history, see `CHANGELOG.md`.
+For package usage, examples, and API behavior, see [README.md](README.md).
+For canonical local setup and daily commands, see [docs/development.md](docs/development.md).
+For canonical verification commands and completion expectations, see [docs/testing.md](docs/testing.md).
+For release history, see [CHANGELOG.md](CHANGELOG.md).
 
 ## Development Setup
+
+[`docs/development.md`](docs/development.md) owns the canonical local setup and daily command surface.
 
 `pubify-mpl` targets Python 3.10+ and expects a working LaTeX installation for export and TeX-side checks.
 
@@ -19,32 +23,20 @@ If you are not using the repo-local `.conda` environment, install the same extra
 
 ## Local Checks
 
-The canonical full test command is:
+[`docs/testing.md`](docs/testing.md) owns the canonical verification path.
+
+The normal full verification sequence for nontrivial changes is:
 
 ```bash
 ./.conda/bin/python3.12 -m pytest -q -p no:cacheprovider
-```
-
-The repo also has a local pre-commit hook:
-
-```bash
 sh .githooks/pre-commit
 ```
 
-That hook is not just linting. It regenerates tracked artifacts:
-
-- `examples/quickstart.ipynb`
-- `gallery/layout-gallery.pdf`
-- `site/`
-
-It may rewrite those files even if you did not edit them directly.
-
-A practical verification sequence after nontrivial changes is:
-
-1. Run the full pytest command.
-2. Run `sh .githooks/pre-commit`.
+That hook is not just linting. It may rewrite tracked generated outputs even if you did not edit them directly. See [docs/development.md](docs/development.md) for the generated-artifact list and local workflow.
 
 ## TeX-Side Changes
+
+For the canonical staged TeX debug workflow, follow [docs/development.md](docs/development.md).
 
 TeX development should be validated from the staged workspace in `build/tex/`, not only through Python tests.
 
@@ -57,18 +49,6 @@ latexmk -g -pdf -interaction=nonstopmode debug-subcaptions.tex
 ```
 
 This keeps the staged `.tex`, `.aux`, `.fls`, `.fdb_latexmk`, and `.log` files together so TeX warnings and `pubify` debug output are easy to inspect.
-
-## Generated Artifacts
-
-These tracked files are generated and should not be edited by hand:
-
-- `examples/quickstart.ipynb`
-- `gallery/layout-gallery.pdf`
-
-Refresh them with:
-
-- `scripts/update_quickstart_notebook.py`
-- `scripts/update_layout_gallery.py`
 
 ## Release Process
 

@@ -1,47 +1,30 @@
-# pubify-mpl Agent Notes
+# AGENTS.md
 
-Keep this file limited to non-obvious repo conventions that are likely to save time or prevent mistakes.
+## Astro-Agents Bootstrap
+- Use `astro-agents` for reusable authoring, review, and routing guidance in this repo.
 
-- `build/tex/` is a flat staged TeX workspace.
-  - `scripts/build_tex_assets.py` rewrites local `\input{...}` / `\include{...}` paths in staged TeX copies so gallery/debug sources still compile after flattening.
-  - TeX source basenames must stay unique across `gallery/` and `debug/`; the builder treats staged basename collisions as errors.
-  - If you change relationships among `gallery/`, `debug/`, or shared TeX files, verify a real compile from `build/tex/`, not just Python tests.
-- The debug TeX files have distinct purposes:
-  - `debug-layout-gallery.tex`: full-gallery diagnostic entrypoint
-  - `debug-subcaptions.tex`: focused subcaption-spacing fixture
-- The LaTeX layout syntax is intentionally split by layout size.
-  - Small layouts use direct panel-by-panel syntax: `\figtwo{...}{...}`, `\figtwowide{...}{...}`, `\figthree{...}{...}{...}`, `\figthreewide{...}{...}{...}`, `\figfour{...}{...}{...}{...}`.
-  - Larger layouts use grouped row syntax such as `\figsix`, `\fignine`, and above.
-  - Do not reintroduce overloaded dual-syntax parsing for the same macro names; that was removed because it was too brittle.
-- When developing TeX-side behavior, stage first and compile from `build/tex/`.
-  - This keeps the staged `.tex`, `.aux`, `.fls`, `.fdb_latexmk`, and `.log` files together so you can inspect TeX warnings and `pubify` debug output in one place.
-  - Example:
-    - `./.conda/bin/python3.12 scripts/build_tex_assets.py debug/debug-subcaptions.tex`
-    - `cd build/tex`
-    - `latexmk -g -pdf -interaction=nonstopmode debug-subcaptions.tex`
-- `gallery/layout-gallery.pdf` and `examples/quickstart.ipynb` are tracked generated artifacts.
-  - Refresh them with `scripts/update_layout_gallery.py` and `scripts/update_quickstart_notebook.py`.
-  - Do not hand-edit them.
-- The built-in fallback template is public as `pubify_mpl.DEFAULT_TEMPLATE`.
-  - The README quick-start block and notebook template are generated/checked against that constant, so update it first.
-- Exported figures use built-in LaTeX serif font-family policy.
-  - Template keys control sizes and spacing, not font family.
-- Free text is intentionally treated differently from standard plot text.
-  - Axis labels, tick labels, legends, and titles are size-normalized.
-  - Free `ax.text(...)` / `fig.text(...)` is not font-size-normalized by default; this is intentional, not an omission.
-- If template geometry or typography seems wrong, use `\figprintlayoutspec` to measure the LaTeX side and copy those values back into the Python template configuration.
-- The repo-local pre-commit hook mutates tracked files.
-  - It regenerates the notebook, refreshes the gallery PDF, and runs `mkdocs build --strict`.
-  - Even if you did not edit those artifacts directly, the hook may rewrite them.
-- The most important repo-specific tests are:
-  - `tests/test_readme.py` for README/template drift
-  - `tests/test_layout.py` for Python-vs-`pubify.sty` default consistency
-  - `tests/test_build_gallery.py` for staged TeX workspace behavior
-- Canonical full test command:
-  - `./.conda/bin/python3.12 -m pytest -q -p no:cacheprovider`
-- Practical local verification sequence after nontrivial changes:
-  - run the full pytest command
-  - run `sh .githooks/pre-commit`
-- Releases should go through `./.conda/bin/python3.12 scripts/release.py` from `main`.
-  - The release script enforces the matching `CHANGELOG.md` entry, runs the full checks, tags, pushes, and uploads.
-  - The release script intentionally discards the known generated outputs from the pre-commit hook (`examples/quickstart.ipynb`, `gallery/layout-gallery.pdf`, `site/`) before its final clean-worktree check.
+## Scope
+- Documentation surface profile: public-python.
+
+## Source Of Truth Docs
+- Follow `README.md` for the public overview, install path, quick-start usage, and public examples.
+- Follow `docs/architecture.md` for package shape, public API boundaries, artifact ownership, and export/layout lifecycle.
+- Follow `docs/testing.md` for canonical verification commands and completion expectations.
+- Follow `docs/development.md` for local setup, generated artifacts, TeX debug workflow, and daily commands.
+
+## Shared Guidance
+- Use `astro-agents/guidance/agent-surface.md` for shared agent-surface guidance.
+- Use `astro-agents/guidance/public-python-projects.md` for shared public Python repo guidance.
+- Use `astro-agents/guidance/python-development.md` for shared Python architecture, coding-policy, and development-workflow guidance.
+
+## Authoring Requirements
+- For Python code, follow `astro-agents/authoring/code/python.md`.
+- For repo docs such as `docs/architecture.md`, `docs/testing.md`, `docs/development.md`, and similar long-lived repo documents, follow `astro-agents/authoring/writing/repo-docs.md`.
+- For `README.md`, follow `astro-agents/authoring/writing/readme-md.md` in addition to `astro-agents/authoring/writing/repo-docs.md`.
+- For plan documents or phased execution docs when they are created or revised, follow `astro-agents/authoring/writing/plan.md`.
+
+## Working Rules
+- For package structure, public API boundaries, artifact ownership, and export/layout-lifecycle-sensitive changes, consult `docs/architecture.md` before editing.
+- Before concluding substantial work, satisfy the verification expectations in `docs/testing.md`.
+- Use the local `./.conda` workflow from `docs/development.md` for Python commands, test runs, and docs builds unless a task explicitly requires something else.
+- For TeX-side behavior, staged assets, or gallery/debug relationships, follow the staged compile workflow in `docs/development.md`.
