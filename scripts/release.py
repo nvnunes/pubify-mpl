@@ -23,8 +23,6 @@ PYPROJECT_PATH = REPO_ROOT / "pyproject.toml"
 CHANGELOG_PATH = REPO_ROOT / "CHANGELOG.md"
 DEFAULT_TWINE_CONFIG = Path.home() / ".pypirc-pubify-mpl"
 GENERATED_ARTIFACT_PATHS = (
-    "examples/quickstart.ipynb",
-    "gallery/layout-gallery.pdf",
     "site",
 )
 

@@ -88,27 +88,7 @@
             
             <li class="nav-item" data-bs-level="1"><a href="#testing" class="nav-link">Testing</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#shared-validation" class="nav-link">Shared Validation</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#environment" class="nav-link">Environment</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
             <li class="nav-item" data-bs-level="2"><a href="#canonical-verification-commands" class="nav-link">Canonical Verification Commands</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#important-test-surfaces" class="nav-link">Important Test Surfaces</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#completion-expectations" class="nav-link">Completion Expectations</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#hook-behavior" class="nav-link">Hook Behavior</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -120,44 +100,13 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="testing">Testing</h1>
-<p>This document is the source of truth for verification commands and completion expectations in <code>pubify-mpl</code>.</p>
-<h2 id="shared-validation">Shared Validation</h2>
-<p>Use the shared base testing guidance in <code>astro-agents/validation/base-testing.md</code>.</p>
-<h2 id="environment">Environment</h2>
 <p>Use the repo-local Python environment in <code>./.conda</code>.</p>
-<p>Install or refresh the editable development environment with:</p>
-<div class="highlight"><pre><span></span><code>./.conda/bin/pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
-</code></pre></div>
 <h2 id="canonical-verification-commands">Canonical Verification Commands</h2>
-<p>Run the full test suite with:</p>
 <div class="highlight"><pre><span></span><code>./.conda/bin/python3.12<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-q<span class="w"> </span>-p<span class="w"> </span>no:cacheprovider
+./.conda/bin/mkdocs<span class="w"> </span>build<span class="w"> </span>--strict
 </code></pre></div>
-<p>Then run the repo-local hook with:</p>
-<div class="highlight"><pre><span></span><code>sh<span class="w"> </span>.githooks/pre-commit
-</code></pre></div>
-<h2 id="important-test-surfaces">Important Test Surfaces</h2>
-<ul>
-<li><code>tests/test_readme.py</code> guards README and canonical-template drift.</li>
-<li><code>tests/test_layout.py</code> guards Python-vs-<code>pubify.sty</code> default consistency.</li>
-<li><code>tests/test_build_gallery.py</code> guards staged TeX workspace behavior.</li>
-<li><code>tests/test_release.py</code> guards release-script invariants.</li>
-</ul>
-<h2 id="completion-expectations">Completion Expectations</h2>
-<ul>
-<li>Substantial changes finish with the full pytest command plus <code>sh .githooks/pre-commit</code>.</li>
-<li>Changes to TeX-side behavior require staged compile verification from <code>build/tex/</code>, not only Python tests.</li>
-<li>README examples, notebook templates, and layout-default documentation must keep docs and example drift green.</li>
-<li>Prefer verification of externally visible behavior and published usage over tests coupled tightly to internal structure.</li>
-</ul>
-<h2 id="hook-behavior">Hook Behavior</h2>
-<p>The repo-local pre-commit hook:</p>
-<ul>
-<li>regenerates <code>examples/quickstart.ipynb</code></li>
-<li>refreshes <code>gallery/layout-gallery.pdf</code></li>
-<li>runs <code>./.conda/bin/mkdocs build --strict</code></li>
-<li>stages those generated outputs, including <code>site/</code></li>
-</ul>
-<p>It may rewrite tracked generated files even when you did not edit them directly.</p></div>
+<p>The test suite should remain TeX-free. LaTeX layout and staged TeX validation
+belong in <code>pubify-tex</code>.</p></div>
             </div>
         </div>
 

@@ -88,103 +88,15 @@
             
             <li class="nav-item" data-bs-level="1"><a href="#api-reference" class="nav-link">API Reference</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#prepare" class="nav-link">prepare</a>
+            <li class="nav-item" data-bs-level="2"><a href="#figure-preparation" class="nav-link">Figure Preparation</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#install_pubify_package" class="nav-link">install_pubify_package</a>
+            <li class="nav-item" data-bs-level="2"><a href="#matplotlib-context" class="nav-link">Matplotlib Context</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#write_tex_template" class="nav-link">write_tex_template</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#pubify_rc_context" class="nav-link">pubify_rc_context</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#save_fig" class="nav-link">save_fig</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#hide_labels" class="nav-link">hide_labels</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#hide_annotations" class="nav-link">hide_annotations</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#hide_ticks" class="nav-link">hide_ticks</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#hide_tick_labels" class="nav-link">hide_tick_labels</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#hide_grid" class="nav-link">hide_grid</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#hide_cbar" class="nav-link">hide_cbar</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#remove_outside_padding" class="nav-link">remove_outside_padding</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#match_axis_span" class="nav-link">match_axis_span</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#match_axis_height" class="nav-link">match_axis_height</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#match_axis_width" class="nav-link">match_axis_width</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#force_font_family" class="nav-link">force_font_family</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#set_line_width" class="nav-link">set_line_width</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#set_spine_width" class="nav-link">set_spine_width</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#set_tick_width" class="nav-link">set_tick_width</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#set_tick_length" class="nav-link">set_tick_length</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#set_axes_labelsize" class="nav-link">set_axes_labelsize</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#set_tick_labelsize" class="nav-link">set_tick_labelsize</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#set_legend_fontsize" class="nav-link">set_legend_fontsize</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#set_title_fontsize" class="nav-link">set_title_fontsize</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#use_template" class="nav-link">use_template</a>
+            <li class="nav-item" data-bs-level="2"><a href="#adjustments" class="nav-link">Adjustments</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -196,8 +108,8 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="api-reference">API Reference</h1>
-<p>This page is generated from the public Python docstrings.</p>
-<h2 id="prepare">prepare</h2>
+<p>This page is generated from public Python docstrings.</p>
+<h2 id="figure-preparation">Figure Preparation</h2>
 
 
 <div class="doc doc-object doc-function">
@@ -207,719 +119,249 @@
 
     <div class="doc doc-contents first">
 
-        <p>Install the LaTeX-side files for a document directory.</p>
-<p><code>prepare(...)</code> copies <code>pubify.sty</code> into <code>destination</code> and writes a
-<code>pubify-template.tex</code> file there using the provided template values.</p>
+        <p>Yield a Matplotlib figure prepared for downstream export.</p>
+<p>The original figure is cloned by default. Passing an <code>Axes</code> isolates that
+panel and, unless <code>hide_cbar=True</code>, any attached colorbar axes. The yielded
+figure is closed automatically when the context exits unless
+<code>skip_clone=True</code> was used.</p>
 
 
-<p><span class="doc-section-title">Parameters:</span></p>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Prepare and save a Matplotlib figure with explicit output sizing.</p>
+<p>This Matplotlib-only helper does not know about LaTeX layout names or TeX
+templates. Callers that need document-aware layout sizing should use
+<code>pubify_tex.save_fig(...)</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Resolved Matplotlib styling values available to export callbacks.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
     <table>
       <thead>
         <tr>
           <th>Name</th>
           <th>Type</th>
           <th>Description</th>
-          <th>Default</th>
         </tr>
       </thead>
       <tbody>
           <tr class="doc-section-item">
-            <td>
-                <code>destination</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span> | <span title="pathlib.Path">Path</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Directory that should receive <code>pubify.sty</code> and
-<code>pubify-template.tex</code>.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>template</code>
-            </td>
-            <td>
-                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Optional template dictionary used to generate
-<code>pubify-template.tex</code>.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="tuple">tuple</span>[<span title="pathlib.Path">Path</span>, <span title="pathlib.Path">Path</span>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>A pair <code>(package_path, template_path)</code> with the written file paths.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="install_pubify_package">install_pubify_package</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Copy <code>pubify.sty</code> into a document directory.</p>
-<p>In normal use, prefer <code>prepare(...)</code>, which installs both <code>pubify.sty</code> and
-<code>pubify-template.tex</code> together.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>destination</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span> | <span title="pathlib.Path">Path</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Directory that should receive <code>pubify.sty</code>, or an explicit
-<code>.sty</code> destination path.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="pathlib.Path">Path</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The written <code>pubify.sty</code> path.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="write_tex_template">write_tex_template</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Write <code>pubify-template.tex</code> for a document template dictionary.</p>
-<p>In normal use, prefer <code>prepare(...)</code>, which writes the template file and
-installs <code>pubify.sty</code> in one step.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>path</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span> | <span title="pathlib.Path">Path</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Destination directory or explicit <code>.tex</code> file path.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>template</code>
-            </td>
-            <td>
-                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Optional template dictionary. When omitted, the built-in
-default template is used.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="pathlib.Path">Path</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>The written <code>pubify-template.tex</code> path.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="pubify_rc_context">pubify_rc_context</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Apply the construction-time publication rc context implied by a pubify template.</p>
-
-
-    </div>
-
-</div><h2 id="save_fig">save_fig</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Export a copied Matplotlib figure or axes for a named LaTeX layout.</p>
-<p><code>save_fig(...)</code> normally never modifies the original figure in place. It
-clones the figure, applies publication styling and any requested cleanup to
-that copy, resizes the copy to fit the selected layout, and writes the
-exported file. Passing a <code>Figure</code> exports the full composed figure as one
-artifact. Passing an <code>Axes</code> exports only that axes panel, optionally keeping
-an attached colorbar. If <code>skip_clone=True</code>, export operates on the original
-figure. If <code>filename</code> has no suffix, <code>.pdf</code> is used by default.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig_or_ax</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p><code>matplotlib.figure.Figure</code> to export as a full composed
-figure, or <code>matplotlib.axes.Axes</code> to export as a single panel.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>layout</code>
-            </td>
+            <td><code><span title="pubify_mpl.ResolvedStyle.font_family">font_family</span></code></td>
             <td>
                   <code><span title="str">str</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Named layout such as <code>"onewide"</code>, <code>"twowide"</code>, or <code>"four"</code>.</p>
+                <p>Matplotlib font family applied to prepared figure text.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="pubify_mpl.ResolvedStyle.base_fontsize_pt">base_fontsize_pt</span></code></td>
             <td>
-                <code>filename</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span> | <span title="pathlib.Path">Path</span></code>
+                  <code><span title="float">float</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Output path for the exported figure. If no suffix is given,
-<code>.pdf</code> is used. Relative paths are created if needed; absolute paths
-require an existing parent directory.</p>
+                <p>Base font size in points.</p>
               </div>
-            </td>
-            <td>
-                <em>required</em>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="pubify_mpl.ResolvedStyle.axes_labelsize_pt">axes_labelsize_pt</span></code></td>
             <td>
-                <code>template</code>
-            </td>
-            <td>
-                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="float">float</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Optional template dictionary. Overrides any active
-<code>use_template(...)</code> context.</p>
+                <p>Axis-label font size in points, or a negative value
+when labels should keep their existing size.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="pubify_mpl.ResolvedStyle.tick_labelsize_pt">tick_labelsize_pt</span></code></td>
             <td>
-                <code>caption_lines</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span> | None</code>
+                  <code><span title="float">float</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Estimated number of lines in the main caption. Defaults to <code>1</code>.</p>
+                <p>Tick-label font size in points, or a negative value
+when tick labels should keep their existing size.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="pubify_mpl.ResolvedStyle.legend_fontsize_pt">legend_fontsize_pt</span></code></td>
             <td>
-                <code>subcaption_lines</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span> | None</code>
+                  <code><span title="float">float</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Estimated number of lines in each subcaption. Defaults to <code>0</code>.</p>
+                <p>Legend font size in points, or a negative value
+when legends should keep their existing size.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="pubify_mpl.ResolvedStyle.title_fontsize_pt">title_fontsize_pt</span></code></td>
             <td>
-                <code>force_width</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span> | None</code>
+                  <code><span title="float">float</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Optional width override in inches. Supported for non-wide
-layouts only and must still fit inside the chosen layout budget.</p>
+                <p>Title font size in points, or a negative value when
+titles should keep their existing size.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="pubify_mpl.ResolvedStyle.line_width_pt">line_width_pt</span></code></td>
             <td>
-                <code>force_height</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span> | None</code>
+                  <code><span title="float">float</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Optional height cap in inches. The export is first sized
-normally for the chosen layout and then uniformly scaled down if it
-would otherwise exceed this height. On wide layouts, the default
-sizing uses the full layout width before this cap is applied.</p>
+                <p>Line width in points, or a negative value when line
+widths should keep their existing size.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="pubify_mpl.ResolvedStyle.axes_line_width_pt">axes_line_width_pt</span></code></td>
             <td>
-                <code>force_aspect</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span> | None</code>
+                  <code><span title="float">float</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Optional aspect ratio override for the exported copy.</p>
+                <p>Spine and tick width in points, or a negative value
+when those widths should keep their existing size.</p>
               </div>
-            </td>
-            <td>
-                  <code>None</code>
             </td>
           </tr>
           <tr class="doc-section-item">
+            <td><code><span title="pubify_mpl.ResolvedStyle.tick_length_pt">tick_length_pt</span></code></td>
             <td>
-                <code>dpi</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Export DPI for the copied figure.</p>
-              </div>
-            </td>
-            <td>
-                  <code>300</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>keep_titles</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
+                  <code><span title="float">float</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Keep axis titles on the copied figure instead of clearing them.</p>
+                <p>Tick length in points, or a negative value when tick
+lengths should keep their existing size.</p>
               </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>hide_labels</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Remove axis labels and shared figure labels from the copied
-figure.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>hide_annotations</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Remove <code>ax.text(...)</code> annotations from the copied figure.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>hide_ticks</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Remove tick marks and tick labels from the copied figure.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>hide_tick_labels</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Remove tick labels while keeping tick positions.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>hide_grid</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Disable the grid on the copied figure.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>hide_cbar</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Remove attached colorbars and all colorbar axes from the
-copied figure.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>skip_clone</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Skip the pickle-clone step and export the original figure in place.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>skip_rasterize</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Disable the vector-output rasterization heuristic.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>rasterize_scatter_threshold</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Collection-size threshold for auto-rasterizing
-scatter-like artists in vector outputs.</p>
-              </div>
-            </td>
-            <td>
-                  <code>1000</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>rasterize_image_pixel_threshold</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Pixel-count threshold for auto-rasterizing
-image artists in vector outputs.</p>
-              </div>
-            </td>
-            <td>
-                  <code>1000000</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>rasterize_line_vertex_threshold</code>
-            </td>
-            <td>
-                  <code><span title="int">int</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Vertex-count threshold for auto-rasterizing
-line artists in vector outputs.</p>
-              </div>
-            </td>
-            <td>
-                  <code>2000</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>extra_rcparams</code>
-            </td>
-            <td>
-                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Additional Matplotlib rcParams applied during export.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>prepare_export</code>
-            </td>
-            <td>
-                  <code><span title="pubify_mpl.export.PrepareExportCallback">PrepareExportCallback</span> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Optional callback that receives the figure object that
-will be exported after the standard cleanup/style pass and can make
-additional changes before rasterization and export sizing. For
-<code>Figure</code> input, this is the full composed figure copy. For <code>Axes</code>
-input, this is the isolated single-panel figure copy. When
-<code>skip_clone=True</code>, this may be the original figure. Callbacks may
-accept either <code>prepare_export(fig_export)</code> or
-<code>prepare_export(fig_export, style)</code>, where <code>style</code> is a
-<code>ResolvedStyle</code> carrying the resolved publication styling values.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>verbose</code>
-            </td>
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Print export diagnostics.</p>
-              </div>
-            </td>
-            <td>
-                  <code>False</code>
             </td>
           </tr>
       </tbody>
     </table>
 
 
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
     </div>
 
-</div><h2 id="hide_labels">hide_labels</h2>
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Return a complete Matplotlib export style dictionary.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Return a renderer for a Matplotlib figure after drawing its canvas.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Return the drawn figure's tight bounding box in inches.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+
+    <div class="doc doc-contents first">
+
+        <p>Rasterize heavy Matplotlib artists before vector export.</p>
+
+
+    </div>
+
+</div><h2 id="matplotlib-context">Matplotlib Context</h2>
 
 
 <div class="doc doc-object doc-function">
@@ -929,305 +371,12 @@ accept either <code>prepare_export(fig_export)</code> or
 
     <div class="doc doc-contents first">
 
-        <p>Remove x/y axis labels and shared figure labels on a figure or axes tree.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose labels should be removed.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
+        <p>Apply the construction-time publication rc context implied by a pubify style.</p>
 
 
     </div>
 
-</div><h2 id="hide_annotations">hide_annotations</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Remove <code>ax.text(...)</code> annotations on a figure or axes tree.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose text annotations should be removed.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="hide_ticks">hide_ticks</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Remove tick locations and tick labels on a figure or axes tree.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose ticks should be removed.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="hide_tick_labels">hide_tick_labels</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Remove tick labels while preserving tick locations.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose tick labels should be cleared.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="hide_grid">hide_grid</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Disable gridlines on the selected axes.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>target</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes that defines the traversal root.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>axes</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.axes.Axes">Axes</span> | <span title="collections.abc.Iterable">Iterable</span>[<span title="matplotlib.axes.Axes">Axes</span>] | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Optional axes selection. When omitted, all axes in <code>target</code> are used.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="hide_cbar">hide_cbar</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Remove colorbar axes attached to the selected axes.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>target</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes that defines the traversal root.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>axes</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.axes.Axes">Axes</span> | <span title="collections.abc.Iterable">Iterable</span>[<span title="matplotlib.axes.Axes">Axes</span>] | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Optional axes selection. When omitted, all axes in <code>target</code> are used.</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="remove_outside_padding">remove_outside_padding</h2>
+</div><h2 id="adjustments">Adjustments</h2>
 
 
 <div class="doc doc-object doc-function">
@@ -1287,729 +436,6 @@ also align companion axes with <code>match_axis_height(...)</code> or
             </td>
             <td>
                   <code>0.0</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="match_axis_span">match_axis_span</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Match one axes span to another while preserving the orthogonal placement.</p>
-<p>This is useful for manually positioned companion axes such as shared
-colorbars that should match the height or width of a reference data axes
-after layout tweaks or export-time adjustments. If you also call
-<code>remove_outside_padding(...)</code>, do that first and then rematch the span.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>target_ax</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Axes whose span should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>ref_ax</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Reference axes whose span should be matched.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>axis</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Which span to match. Use <code>"y"</code> to match vertical position and
-height, or <code>"x"</code> to match horizontal position and width.</p>
-              </div>
-            </td>
-            <td>
-                  <code>&#39;y&#39;</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="match_axis_height">match_axis_height</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Match a target axes height and vertical position to a reference axes.</p>
-<p>If you also call <code>remove_outside_padding(...)</code>, do that first and then call
-<code>match_axis_height(...)</code>.</p>
-
-
-    </div>
-
-</div><h2 id="match_axis_width">match_axis_width</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Match a target axes width and horizontal position to a reference axes.</p>
-<p>If you also call <code>remove_outside_padding(...)</code>, do that first and then call
-<code>match_axis_width(...)</code>.</p>
-
-
-    </div>
-
-</div><h2 id="force_font_family">force_font_family</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Force a font family across figure text, labels, ticks, and legends.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure whose text artists should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>family</code>
-            </td>
-            <td>
-                  <code><span title="str">str</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Font family to apply.</p>
-              </div>
-            </td>
-            <td>
-                  <code><span title="pubify_mpl.rc.PUBIFY_FONT_FAMILY">PUBIFY_FONT_FAMILY</span></code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="set_line_width">set_line_width</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Set line width on lines and compatible collections.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose line-like artists should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>line_width</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>New stroke width.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="set_spine_width">set_spine_width</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Set spine width on a figure or axes tree.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose spines should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>spine_width</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>New spine stroke width.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="set_tick_width">set_tick_width</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Set tick stroke width on a figure or axes tree.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose ticks should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>tick_width</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>New tick stroke width.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="set_tick_length">set_tick_length</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Set tick length on a figure or axes tree.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose ticks should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>tick_length</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>New tick length.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="set_axes_labelsize">set_axes_labelsize</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Set x/y axis label and shared figure label font size.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose axis-label text should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>axes_labelsize</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>New axis-label font size.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="set_tick_labelsize">set_tick_labelsize</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Set tick label font size on a figure or axes tree.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose tick labels should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>tick_labelsize</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>New tick-label font size.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="set_legend_fontsize">set_legend_fontsize</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Set legend text and title font size on a figure or axes tree.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose legends should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>legend_fontsize</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>New legend text and title font size.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="set_title_fontsize">set_title_fontsize</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Set axes title font size on a figure or axes tree.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>fig</code>
-            </td>
-            <td>
-                  <code><span title="matplotlib.figure.Figure">Figure</span> | <span title="matplotlib.axes.Axes">Axes</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Figure or axes whose titles should be updated.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>title_fontsize</code>
-            </td>
-            <td>
-                  <code><span title="float">float</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>New title font size.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    </div>
-
-</div><h2 id="use_template">use_template</h2>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-    <div class="doc doc-contents first">
-
-        <p>Temporarily set a default template for <code>save_fig(...)</code> calls.</p>
-<p>Inside the <code>with</code> block, any <code>save_fig(...)</code> call that does not pass an
-explicit <code>template=...</code> argument will use this template.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>template</code>
-            </td>
-            <td>
-                  <code><span title="pubify_mpl.layout.TemplateSpec">TemplateSpec</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Template dictionary to activate inside the context.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
             </td>
           </tr>
       </tbody>

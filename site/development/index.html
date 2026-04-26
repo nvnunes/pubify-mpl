@@ -88,30 +88,6 @@
             
             <li class="nav-item" data-bs-level="1"><a href="#development" class="nav-link">Development</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#local-environment" class="nav-link">Local Environment</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#daily-commands" class="nav-link">Daily Commands</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#generated-artifacts" class="nav-link">Generated Artifacts</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#tex-debug-workflow" class="nav-link">TeX Debug Workflow</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#release-workflow" class="nav-link">Release Workflow</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#contributor-notes" class="nav-link">Contributor Notes</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
               </ul>
             </li>
         </ul>
@@ -120,53 +96,16 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="development">Development</h1>
-<p>This document is the source of truth for local setup, generated artifacts, TeX debug workflow, and daily development commands in <code>pubify-mpl</code>.</p>
-<h2 id="local-environment">Local Environment</h2>
 <p>The canonical local environment is the repo-local <code>./.conda</code>.</p>
-<p>Install or refresh the editable development environment with:</p>
 <div class="highlight"><pre><span></span><code>./.conda/bin/pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
 </code></pre></div>
-<p>If you use a different environment, keep the installed dependency set aligned with the same <code>.[dev]</code> extras.</p>
-<h2 id="daily-commands">Daily Commands</h2>
-<p>Run the full test suite with:</p>
+<p>Run tests with:</p>
 <div class="highlight"><pre><span></span><code>./.conda/bin/python3.12<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-q<span class="w"> </span>-p<span class="w"> </span>no:cacheprovider
 </code></pre></div>
-<p>Build the docs site strictly with:</p>
+<p>Build docs with:</p>
 <div class="highlight"><pre><span></span><code>./.conda/bin/mkdocs<span class="w"> </span>build<span class="w"> </span>--strict
 </code></pre></div>
-<p>Refresh the tracked notebook with:</p>
-<div class="highlight"><pre><span></span><code>./.conda/bin/python3.12<span class="w"> </span>scripts/update_quickstart_notebook.py
-</code></pre></div>
-<p>Refresh the tracked layout gallery PDF with:</p>
-<div class="highlight"><pre><span></span><code>./.conda/bin/python3.12<span class="w"> </span>scripts/update_layout_gallery.py
-</code></pre></div>
-<h2 id="generated-artifacts">Generated Artifacts</h2>
-<p>These tracked outputs are generated and may be rewritten by <code>sh .githooks/pre-commit</code>:</p>
-<ul>
-<li><code>examples/quickstart.ipynb</code></li>
-<li><code>gallery/layout-gallery.pdf</code></li>
-<li><code>site/</code></li>
-</ul>
-<p>Do not hand-edit those generated outputs.</p>
-<h2 id="tex-debug-workflow">TeX Debug Workflow</h2>
-<p>Validate TeX-side changes from the staged workspace in <code>build/tex/</code>, not only through Python tests.</p>
-<p>A typical stage-first flow is:</p>
-<div class="highlight"><pre><span></span><code>./.conda/bin/python3.12<span class="w"> </span>scripts/build_tex_assets.py<span class="w"> </span>debug/debug-subcaptions.tex
-<span class="nb">cd</span><span class="w"> </span>build/tex
-latexmk<span class="w"> </span>-g<span class="w"> </span>-pdf<span class="w"> </span>-interaction<span class="o">=</span>nonstopmode<span class="w"> </span>debug-subcaptions.tex
-</code></pre></div>
-<p>This keeps the staged <code>.tex</code>, <code>.aux</code>, <code>.fls</code>, <code>.fdb_latexmk</code>, and <code>.log</code> files together so TeX warnings and <code>pubify</code> debug output are easy to inspect.</p>
-<h2 id="release-workflow">Release Workflow</h2>
-<p>The canonical release entrypoint is:</p>
-<div class="highlight"><pre><span></span><code>./.conda/bin/python3.12<span class="w"> </span>scripts/release.py
-</code></pre></div>
-<p>Release execution must run from <code>main</code>.</p>
-<p>The release script validates the changelog and worktree state, runs the full pytest command, runs <code>sh .githooks/pre-commit</code>, builds fresh artifacts, tags, pushes, and uploads.</p>
-<p>Override the default Twine config path when needed with:</p>
-<div class="highlight"><pre><span></span><code>./.conda/bin/python3.12<span class="w"> </span>scripts/release.py<span class="w"> </span>--config-file<span class="w"> </span>/path/to/config
-</code></pre></div>
-<h2 id="contributor-notes">Contributor Notes</h2>
-<p><code>CONTRIBUTING.md</code> remains the human-facing contributor and release guide. This document owns the canonical local commands, generated-artifact workflow, and TeX debug path.</p></div>
+<p>Keep TeX asset, template, and named-layout work in <code>pubify-tex</code>.</p></div>
             </div>
         </div>
 

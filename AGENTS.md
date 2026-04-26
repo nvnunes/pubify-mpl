@@ -10,7 +10,7 @@
 - Follow `README.md` for the public overview, install path, quick-start usage, and public examples.
 - Follow `docs/architecture.md` for package shape, public API boundaries, artifact ownership, and export/layout lifecycle.
 - Follow `docs/testing.md` for canonical verification commands and completion expectations.
-- Follow `docs/development.md` for local setup, generated artifacts, TeX debug workflow, and daily commands.
+- Follow `docs/development.md` for local setup and daily commands.
 
 ## Shared Guidance
 - Use `astro-agents/guidance/agent-surface.md` for shared agent-surface guidance.
@@ -27,4 +27,3 @@
 - For package structure, public API boundaries, artifact ownership, and export/layout-lifecycle-sensitive changes, consult `docs/architecture.md` before editing.
 - Before concluding substantial work, satisfy the verification expectations in `docs/testing.md`.
 - Use the local `./.conda` workflow from `docs/development.md` for Python commands, test runs, and docs builds unless a task explicitly requires something else.
-- For TeX-side behavior, staged assets, or gallery/debug relationships, follow the staged compile workflow in `docs/development.md`.

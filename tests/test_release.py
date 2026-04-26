@@ -62,10 +62,10 @@ def test_clean_worktree_check_rejects_dirty_status():
 
 
 def test_dirty_paths_extracts_paths_from_porcelain_output():
-    status_output = "M  gallery/layout-gallery.pdf\nA  site/index.html\nR  old -> new\n"
+    status_output = "M  README.md\nA  site/index.html\nR  old -> new\n"
 
     assert dirty_paths(status_output) == [
-        "gallery/layout-gallery.pdf",
+        "README.md",
         "site/index.html",
         "new",
     ]

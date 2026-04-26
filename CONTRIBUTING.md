@@ -11,7 +11,7 @@ For release history, see [CHANGELOG.md](CHANGELOG.md).
 
 [`docs/development.md`](docs/development.md) owns the canonical local setup and daily command surface.
 
-`pubify-mpl` targets Python 3.10+ and expects a working LaTeX installation for export and TeX-side checks.
+`pubify-mpl` targets Python 3.10+ and does not require a LaTeX installation.
 
 Install the project with development dependencies:
 
@@ -29,26 +29,13 @@ The normal full verification sequence for nontrivial changes is:
 
 ```bash
 ./.conda/bin/python3.12 -m pytest -q -p no:cacheprovider
-sh .githooks/pre-commit
+./.conda/bin/mkdocs build --strict
 ```
 
-That hook is not just linting. It may rewrite tracked generated outputs even if you did not edit them directly. See [docs/development.md](docs/development.md) for the generated-artifact list and local workflow.
+Run `sh .githooks/pre-commit` as an additional local check when changing tracked
+generated outputs or preparing a release.
 
-## TeX-Side Changes
-
-For the canonical staged TeX debug workflow, follow [docs/development.md](docs/development.md).
-
-TeX development should be validated from the staged workspace in `build/tex/`, not only through Python tests.
-
-A typical flow is:
-
-```bash
-./.conda/bin/python3.12 scripts/build_tex_assets.py debug/debug-subcaptions.tex
-cd build/tex
-latexmk -g -pdf -interaction=nonstopmode debug-subcaptions.tex
-```
-
-This keeps the staged `.tex`, `.aux`, `.fls`, `.fdb_latexmk`, and `.log` files together so TeX warnings and `pubify` debug output are easy to inspect.
+TeX asset and layout work belongs in `pubify-tex`.
 
 ## Release Process
 

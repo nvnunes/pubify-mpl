@@ -4,11 +4,6 @@ set -eu
 export MPLCONFIGDIR="$PWD/build/mplconfig"
 mkdir -p "$MPLCONFIGDIR"
 
-./.conda/bin/python3.12 scripts/update_quickstart_notebook.py >/dev/null
-./.conda/bin/python3.12 scripts/update_layout_gallery.py >/dev/null
 ./.conda/bin/mkdocs build --strict >/dev/null
 
-git add \
-  examples/quickstart.ipynb \
-  gallery/layout-gallery.pdf \
-  site/
+git add site/

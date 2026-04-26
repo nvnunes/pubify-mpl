@@ -4,14 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pubify-mpl"
-version = "1.1.0"
-description = "Publication-oriented Matplotlib figure export and LaTeX layout helpers"
+version = "1.2.0"
+description = "Publication-oriented Matplotlib figure preparation and export helpers"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 dependencies = [
   "matplotlib>=3.8",
-  "numpy>=1.26",
 ]
 
 [project.urls]
@@ -35,10 +34,6 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[tool.setuptools.package-data]
-pubify_mpl = []
-"pubify_mpl.assets" = ["*.sty"]
 
 [tool.setuptools.exclude-package-data]
 "*" = [".DS_Store"]

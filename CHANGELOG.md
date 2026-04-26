@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0
+
+- Split LaTeX layout, template, and TeX asset support into `pubify-tex`.
+- Removed TeX-facing package-root APIs from `pubify-mpl`.
+- Added TeX-free Matplotlib figure preparation through `prepare_figure(...)`.
+- Changed `save_fig(...)` to explicit-size Matplotlib export without named LaTeX layouts.
+
 ## 1.1.0
 
 - Changed `save_fig(fig, ...)` to export the full composed Matplotlib figure, while `save_fig(ax, ...)` continues to export only the selected axes panel.
