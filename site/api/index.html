@@ -172,11 +172,12 @@ templates. Callers that need document-aware layout sizing should use
           <tr class="doc-section-item">
             <td><code><span title="pubify_mpl.ResolvedStyle.font_family">font_family</span></code></td>
             <td>
-                  <code><span title="str">str</span></code>
+                  <code><span title="str">str</span> | None</code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Matplotlib font family applied to prepared figure text.</p>
+                <p>Matplotlib font family applied to prepared figure text,
+or <code>None</code> when no font family is forced.</p>
               </div>
             </td>
           </tr>
@@ -371,7 +372,7 @@ lengths should keep their existing size.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Apply the construction-time publication rc context implied by a pubify style.</p>
+        <p>Apply a target-neutral Matplotlib construction rc context.</p>
 
 
     </div>

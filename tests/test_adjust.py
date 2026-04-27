@@ -159,6 +159,40 @@ def test_force_font_family_updates_axis_and_figure_text():
     plt.close(fig)
 
 
+class _FakeWcsCoord:
+    def __init__(self, label: str) -> None:
+        self.label = label
+        self.axislabel_kwargs = {}
+        self.ticklabel_kwargs = {}
+
+    def get_axislabel(self) -> str:
+        return self.label
+
+    def set_axislabel(self, label: str, **kwargs) -> None:
+        self.label = label
+        self.axislabel_kwargs.update(kwargs)
+
+    def set_ticklabel(self, **kwargs) -> None:
+        self.ticklabel_kwargs.update(kwargs)
+
+
+def test_style_helpers_update_wcsaxes_coordinate_labels():
+    fig, ax = plt.subplots()
+    ra = _FakeWcsCoord("RA")
+    dec = _FakeWcsCoord("Dec")
+    ax.coords = (ra, dec)
+
+    force_font_family(fig, "Aptos")
+    set_axes_labelsize(fig, 12.0)
+    set_tick_labelsize(fig, 10.0)
+
+    assert ra.axislabel_kwargs == {"fontfamily": "Aptos", "size": 12.0}
+    assert dec.axislabel_kwargs == {"fontfamily": "Aptos", "size": 12.0}
+    assert ra.ticklabel_kwargs == {"fontfamily": "Aptos", "size": 10.0}
+    assert dec.ticklabel_kwargs == {"fontfamily": "Aptos", "size": 10.0}
+    plt.close(fig)
+
+
 def test_set_axes_labelsize_updates_shared_figure_labels():
     fig, ax = plt.subplots()
     fig.supxlabel("Shared X")

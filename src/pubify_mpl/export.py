@@ -17,7 +17,7 @@ from matplotlib.figure import Figure
 from matplotlib.transforms import BboxBase
 
 from . import adjust
-from .rc import PUBIFY_FONT_FAMILY, resolved_pubify_rc
+from .rc import resolved_pubify_rc
 from .style import DEFAULT_STYLE, StyleSpec, normalized_style
 
 
@@ -26,7 +26,8 @@ class ResolvedStyle:
     """Resolved Matplotlib styling values available to export callbacks.
 
     Attributes:
-        font_family: Matplotlib font family applied to prepared figure text.
+        font_family: Matplotlib font family applied to prepared figure text,
+            or ``None`` when no font family is forced.
         base_fontsize_pt: Base font size in points.
         axes_labelsize_pt: Axis-label font size in points, or a negative value
             when labels should keep their existing size.
@@ -44,7 +45,7 @@ class ResolvedStyle:
             lengths should keep their existing size.
     """
 
-    font_family: str
+    font_family: str | None
     base_fontsize_pt: float
     axes_labelsize_pt: float
     tick_labelsize_pt: float
@@ -188,7 +189,7 @@ def auto_rasterize_figure(
 def _resolved_style_from_spec(
     style: StyleSpec | None = None,
     *,
-    font_family: str,
+    font_family: str | None,
 ) -> ResolvedStyle:
     resolved = normalized_style(style)
     return ResolvedStyle(
@@ -256,6 +257,7 @@ def prepare_figure(
     skip_clone: bool = False,
     extra_rcparams: dict[str, Any] | None = None,
     text_usetex: bool = False,
+    font_family: str | None = None,
     prepare_export: PrepareExportCallback | None = None,
 ) -> Iterator[Figure]:
     """Yield a Matplotlib figure prepared for downstream export.
@@ -267,7 +269,6 @@ def prepare_figure(
     """
 
     resolved_style = normalized_style(style)
-    font_family = PUBIFY_FONT_FAMILY
     style_object = _resolved_style_from_spec(resolved_style, font_family=font_family)
 
     export_full_figure = False
@@ -335,13 +336,15 @@ def prepare_figure(
             style=resolved_style,
             extra_rcparams=extra_rcparams,
             text_usetex=text_usetex,
+            font_family=font_family,
         )
         rc["savefig.dpi"] = dpi
         rc["figure.dpi"] = dpi
 
         with mpl.rc_context(mpl.rcParamsDefault):
             with mpl.rc_context(rc):
-                adjust.force_font_family(fig2, family=font_family)
+                if font_family is not None:
+                    adjust.force_font_family(fig2, family=font_family)
                 fig2.set_facecolor("white")
                 if resolved_style["axes_labelsize_pt"] >= 0:
                     adjust.set_axes_labelsize(fig2, resolved_style["axes_labelsize_pt"])
@@ -388,6 +391,7 @@ def save_fig(
     rasterize_line_vertex_threshold: int = 2000,
     extra_rcparams: dict[str, Any] | None = None,
     text_usetex: bool = False,
+    font_family: str | None = None,
     prepare_export: PrepareExportCallback | None = None,
     bbox_inches: str | None = "tight",
     pad_inches: float = 0.0,
@@ -435,6 +439,7 @@ def save_fig(
         skip_clone=skip_clone,
         extra_rcparams=extra_rcparams,
         text_usetex=text_usetex,
+        font_family=font_family,
         prepare_export=prepare_export,
     ) as fig_export:
         if width is not None or height is not None:

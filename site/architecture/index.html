@@ -131,6 +131,11 @@
 <li><code>export.py</code> owns cloning, axes isolation, cleanup, callback invocation,
   rasterization heuristics, and explicit-size saving.</li>
 </ul>
+<p>Font replacement is a generic capability, not a package-wide typography
+policy. <code>prepare_figure(...)</code>, <code>save_fig(...)</code>, and <code>pubify_rc_context(...)</code>
+accept an explicit <code>font_family</code>; when omitted, <code>pubify-mpl</code> does not force a
+target font or install TeX-like serif defaults. Target packages own those
+profiles.</p>
 <h2 id="dependency-boundary">Dependency Boundary</h2>
 <p><code>pubify-mpl</code> must not depend on <code>pubify-tex</code> or ship TeX assets. LaTeX layout,
 template writing, and document-aware named-layout export belong in

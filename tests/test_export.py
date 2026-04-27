@@ -143,6 +143,7 @@ def test_prepare_figure_callback_can_receive_resolved_style():
         pass
 
     assert isinstance(observed["style"], ResolvedStyle)
+    assert observed["style"].font_family is None
     assert observed["style"].axes_labelsize_pt == 14.0
     assert observed["xlabel_size"] == 14.0
     assert observed["tick_size"] == 12.5
@@ -279,15 +280,21 @@ def test_figure_tight_bbox_returns_drawn_bbox():
     plt.close(fig)
 
 
-def test_resolved_pubify_rc_is_tex_free_by_default():
+def test_resolved_pubify_rc_is_target_neutral_by_default():
     rc = resolved_pubify_rc(style={"base_fontsize_pt": 11.0})
 
     assert rc["font.size"] == 11.0
     assert rc["text.usetex"] is False
-    assert rc["font.family"] == "serif"
-    assert rc["font.serif"] == ["Latin Modern Roman", "LMRoman10"]
-    assert rc["mathtext.fontset"] == "cm"
+    assert "font.family" not in rc
+    assert "font.serif" not in rc
+    assert "mathtext.fontset" not in rc
     assert "text.latex.preamble" not in rc
+
+
+def test_resolved_pubify_rc_accepts_explicit_font_family():
+    rc = resolved_pubify_rc(font_family="Aptos")
+
+    assert rc["font.family"] == "Aptos"
 
 
 def test_resolved_pubify_rc_can_enable_usetex_for_callers():
@@ -302,11 +309,54 @@ def test_pubify_rc_context_applies_and_restores_rcparams():
 
     with pubify_rc_context(style={"base_fontsize_pt": 10.0}):
         assert plt.matplotlib.rcParams["text.usetex"] == original_usetex
-        assert plt.matplotlib.rcParams["font.family"] == ["serif"]
+        assert plt.matplotlib.rcParams["font.family"] == original_font_family
         assert plt.matplotlib.rcParams["font.size"] == 10.0
 
     assert plt.matplotlib.rcParams["text.usetex"] == original_usetex
     assert plt.matplotlib.rcParams["font.family"] == original_font_family
+
+
+def test_pubify_rc_context_accepts_explicit_font_family():
+    original_font_family = plt.matplotlib.rcParams["font.family"]
+
+    with pubify_rc_context(font_family="Aptos"):
+        assert plt.matplotlib.rcParams["font.family"] == ["Aptos"]
+
+    assert plt.matplotlib.rcParams["font.family"] == original_font_family
+
+
+def test_prepare_figure_does_not_force_font_family_by_default():
+    fig, ax = plt.subplots()
+    ax.set_xlabel("x")
+    ax.xaxis.label.set_fontfamily("monospace")
+
+    with prepare_figure(fig) as fig_copy:
+        assert fig_copy.axes[0].xaxis.label.get_fontfamily() == ["monospace"]
+
+    plt.close(fig)
+
+
+def test_prepare_figure_forces_explicit_font_family():
+    fig, ax = plt.subplots()
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_title("title")
+    ax.plot([0, 1], [0, 1], label="line")
+    ax.legend()
+    ax.text(0.5, 0.5, "note")
+    fig.text(0.5, 0.95, "figure text")
+
+    with prepare_figure(fig, keep_titles=True, font_family="Aptos") as fig_copy:
+        copied_ax = fig_copy.axes[0]
+        assert copied_ax.xaxis.label.get_fontfamily() == ["Aptos"]
+        assert copied_ax.yaxis.label.get_fontfamily() == ["Aptos"]
+        assert copied_ax.title.get_fontfamily() == ["Aptos"]
+        assert copied_ax.texts[0].get_fontfamily() == ["Aptos"]
+        assert copied_ax.get_xticklabels()[0].get_fontfamily() == ["Aptos"]
+        assert copied_ax.get_legend().get_texts()[0].get_fontfamily() == ["Aptos"]
+        assert fig_copy.texts[0].get_fontfamily() == ["Aptos"]
+
+    plt.close(fig)
 
 
 def test_clone_figure_pickle_returns_distinct_figure():

@@ -25,6 +25,12 @@ Supported package-root imports:
 - `export.py` owns cloning, axes isolation, cleanup, callback invocation,
   rasterization heuristics, and explicit-size saving.
 
+Font replacement is a generic capability, not a package-wide typography
+policy. `prepare_figure(...)`, `save_fig(...)`, and `pubify_rc_context(...)`
+accept an explicit `font_family`; when omitted, `pubify-mpl` does not force a
+target font or install TeX-like serif defaults. Target packages own those
+profiles.
+
 ## Dependency Boundary
 
 `pubify-mpl` must not depend on `pubify-tex` or ship TeX assets. LaTeX layout,

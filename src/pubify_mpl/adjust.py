@@ -6,8 +6,6 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.transforms import Bbox
 
-from .rc import PUBIFY_FONT_FAMILY
-
 
 def _iter_figure_shared_labels(fig: Figure) -> Iterable:
     for attr in ("_supxlabel", "_supylabel"):
@@ -342,6 +340,7 @@ def set_axes_labelsize(fig: Figure | Axes, axes_labelsize: float) -> None:
     for ax in iter_styled_axes(figure):
         ax.xaxis.label.set_fontsize(axes_labelsize)
         ax.yaxis.label.set_fontsize(axes_labelsize)
+        _set_wcsaxes_axislabel_property(ax, size=axes_labelsize)
     for label in _iter_figure_shared_labels(figure):
         label.set_fontsize(axes_labelsize)
 
@@ -355,6 +354,7 @@ def set_tick_labelsize(fig: Figure | Axes, tick_labelsize: float) -> None:
     """
     for ax in iter_axes(fig):
         ax.tick_params(which="both", labelsize=tick_labelsize)
+        _set_wcsaxes_ticklabel_property(ax, size=tick_labelsize)
 
 
 def set_legend_fontsize(fig: Figure | Axes, legend_fontsize: float) -> None:
@@ -387,7 +387,7 @@ def _as_figure(root: Figure | Axes) -> Figure:
     return root.figure if isinstance(root, Axes) else root
 
 
-def force_font_family(fig: Figure, family: str = PUBIFY_FONT_FAMILY) -> None:
+def force_font_family(fig: Figure, family: str = "serif") -> None:
     """Force a font family across figure text, labels, ticks, and legends.
 
     Args:
@@ -403,6 +403,8 @@ def force_font_family(fig: Figure, family: str = PUBIFY_FONT_FAMILY) -> None:
         ax.title.set_fontfamily(family)
         ax.xaxis.label.set_fontfamily(family)
         ax.yaxis.label.set_fontfamily(family)
+        _set_wcsaxes_axislabel_property(ax, fontfamily=family)
+        _set_wcsaxes_ticklabel_property(ax, fontfamily=family)
 
         for text in ax.texts:
             text.set_fontfamily(family)
@@ -415,3 +417,36 @@ def force_font_family(fig: Figure, family: str = PUBIFY_FONT_FAMILY) -> None:
             for text in leg.get_texts():
                 text.set_fontfamily(family)
             leg.get_title().set_fontfamily(family)
+
+
+def _iter_wcs_coordinate_helpers(ax: Axes) -> Iterable:
+    coords = getattr(ax, "coords", None)
+    if coords is None:
+        return ()
+    try:
+        return tuple(coords)
+    except TypeError:
+        return ()
+
+
+def _set_wcsaxes_axislabel_property(ax: Axes, **kwargs) -> None:
+    for coord in _iter_wcs_coordinate_helpers(ax):
+        get_axislabel = getattr(coord, "get_axislabel", None)
+        set_axislabel = getattr(coord, "set_axislabel", None)
+        if get_axislabel is None or set_axislabel is None:
+            continue
+        try:
+            set_axislabel(get_axislabel(), **kwargs)
+        except Exception:
+            continue
+
+
+def _set_wcsaxes_ticklabel_property(ax: Axes, **kwargs) -> None:
+    for coord in _iter_wcs_coordinate_helpers(ax):
+        set_ticklabel = getattr(coord, "set_ticklabel", None)
+        if set_ticklabel is None:
+            continue
+        try:
+            set_ticklabel(**kwargs)
+        except Exception:
+            continue
